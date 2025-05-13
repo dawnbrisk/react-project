@@ -1,0 +1,30 @@
+/* 默认是桌面端样式 */
+@media (max-width: 768px) {
+    /* 手机端样式 */
+    .ant-layout-header {
+        text-align: center;
+    }
+
+    .ant-menu {
+        display: none; /* 隐藏菜单 */
+    }
+
+    .mobile-content {
+        display: block;  /* 显示手机端内容 */
+    }
+
+    .desktop-content {
+        display: none; /* 隐藏桌面端内容 */
+    }
+}
+
+@media (min-width: 769px) {
+    /* 桌面端样式 */
+    .mobile-content {
+        display: none;  /* 隐藏手机端内容 */
+    }
+
+    .desktop-content {
+        display: block; /* 显示桌面端内容 */
+    }
+}
