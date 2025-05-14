@@ -28,7 +28,7 @@ import LocationVisualizationPlus from './pages/web/visualization/apexCharts';
 import PickingIntervalLineChart from './pages/web/picking/PickingInterval_AllData';
 import WebLogin from './pages/web/login/Login';
 import UpdownDetail from "./pages/web/updownmove/updownDetail";
-import LoginPage from "./pages/web/login/LoginPage";
+import UserManagement from "./pages/web/user/UserList.js";
 import DoubleWeekCheckList from './pages/mobile/WorkDetail/DoubleWeek/doubleWeekCheck'
 
 function App() {
@@ -75,6 +75,7 @@ function App() {
                             <Route path="/LocationVisualization" element={<LocationVisualization />} />
                             <Route path="/picking_details/:month/:account" element={<Picking_Details />} />
                             <Route path="/picking_interval" element={<PickingIntervalLineChart />} />
+                            <Route path="/user" element={<UserManagement />} />
                         </Route>
                     </Routes>
                 )}

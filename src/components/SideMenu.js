@@ -38,6 +38,15 @@ const SideMenu = () => {
                         <Link to="/LocationVisualization">Location Visualization</Link>
                     </Menu.Item>
                 </Menu.SubMenu>
+
+                <Menu.SubMenu  title=" System Administration">
+                    <Menu.Item >
+                        <Link to={"/setting"}>Setting</Link>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Link to={"/user"}>User List</Link>
+                    </Menu.Item>
+                </Menu.SubMenu>
             </Menu>
         </Sider>
     );

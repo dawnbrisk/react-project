@@ -121,7 +121,7 @@ const JobSelection = () => {
                             <Badge content='Top 50'>
                                 <HistogramOutline fontSize={48} color='var(--adm-color-primary)'/>
                             </Badge>
-                            <span style={{fontSize: 12, marginTop: 4}}>Oldest SKU</span>
+                            <span style={{fontSize: 12, marginTop: 4}}>Eldest SKU</span>
                         </div>
 
                         <div style={iconContainerStyle}
