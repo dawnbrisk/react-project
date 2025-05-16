@@ -57,8 +57,10 @@ const UserManagement = () => {
 
     // 处理搜索
     useEffect(() => {
+
         const filtered = users.filter(user =>
-            user.username.toLowerCase().includes(searchText.toLowerCase()) ||
+
+            user.name.toLowerCase().includes(searchText.toLowerCase()) ||
             user.id.toString().includes(searchText)
         );
         setFilteredUsers(filtered);
@@ -95,6 +97,7 @@ const UserManagement = () => {
                 password: values.password
             };
             await addUser(newUser);
+
             message.success('用户添加成功');
             setIsModalVisible(false);
             form.resetFields();
@@ -111,6 +114,7 @@ const UserManagement = () => {
     const handleEdit = async () => {
         try {
             const values = await form.validateFields();
+
             await editUser(currentUser.id, {
                 username: values.username,
                 password: values.password
@@ -152,7 +156,7 @@ const UserManagement = () => {
     const showEditModal = (user) => {
         setCurrentUser(user);
         form.setFieldsValue({
-            username: user.username,
+            username: user.name,
             password: user.password
         });
         setIsModalVisible(true);
@@ -184,20 +188,15 @@ const UserManagement = () => {
     // 表格列配置
     const columns = [
         {
-            title: '序号',
+            title: 'Id',
             dataIndex: 'id',
             key: 'id',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => a.id - b.id,
-            render: (text, record, index) => {
-                const { current, pageSize } = pagination;
-                return (current - 1) * pageSize + index + 1;
-            },
         },
         {
-            title: '用户名',
-            dataIndex: 'username',
-            key: 'username',
+            title: 'User Name',
+            dataIndex: 'name',
+            key: 'name',
             render: (text, record) => (
                 <span style={{ textDecoration: record.disabled ? 'line-through' : 'none' }}>
           {text}
@@ -205,7 +204,7 @@ const UserManagement = () => {
             ),
         },
         {
-            title: '密码',
+            title: 'Password',
             dataIndex: 'password',
             key: 'password',
             render: (text, record) => (
@@ -222,13 +221,13 @@ const UserManagement = () => {
             ),
         },
         {
-            title: '创建时间',
-            dataIndex: 'createdAt',
+            title: 'Create Time',
+            dataIndex: 'insert_time',
             key: 'createdAt',
             render: (text) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
-            title: '操作',
+            title: 'Edit',
             key: 'action',
             render: (_, record) => (
                 <Space size="middle" style={{ visibility: hoveredRow === record.id ? 'visible' : 'hidden' }}>
@@ -238,21 +237,21 @@ const UserManagement = () => {
                         onClick={() => showEditModal(record)}
                         disabled={record.disabled}
                     >
-                        编辑
+                        Edit
                     </Button>
                     <Button
                         danger
                         icon={<DeleteOutlined />}
                         onClick={() => handleToggleStatus(record.id)}
                     >
-                        {record.disabled ? '已废弃' : '废弃'}
+                        {record.disabled ? 'Deprecated ' : 'Abandon '}
                     </Button>
                 </Space>
             ),
         },
     ];
 
-    // 行属性配置
+    // 行颜色配置
     const rowProps = (record) => ({
         onMouseEnter: () => setHoveredRow(record.id),
         onMouseLeave: () => setHoveredRow(null),
@@ -265,6 +264,16 @@ const UserManagement = () => {
     return (
         <div style={{ padding: '20px' }}>
             <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
+
+
+                <Input
+                    placeholder="Search User Name"
+                    prefix={<SearchOutlined />}
+                    style={{ width: 300 }}
+                    value={searchText}
+                    onChange={handleSearchChange}
+                    allowClear
+                />
                 <Button
                     type="primary"
                     icon={<PlusOutlined />}
@@ -274,14 +283,6 @@ const UserManagement = () => {
                     添加用户
                 </Button>
 
-                <Input
-                    placeholder="搜索用户名或ID"
-                    prefix={<SearchOutlined />}
-                    style={{ width: 300 }}
-                    value={searchText}
-                    onChange={handleSearchChange}
-                    allowClear
-                />
             </div>
 
             <Table
@@ -302,14 +303,14 @@ const UserManagement = () => {
                     onShowSizeChange={handlePageChange}
                     showSizeChanger
                     showQuickJumper
-                    showTotal={total => `共 ${total} 条`}
+                    showTotal={total => ` Total: ${total}`}
                     pageSizeOptions={['10', '20', '50']}
                 />
             </div>
 
             <Modal
-                title={currentUser ? '编辑用户' : '添加用户'}
-                visible={isModalVisible}
+                title={currentUser ? 'Edit' : 'Add user'}
+                open={isModalVisible}
                 onOk={handleModalOk}
                 onCancel={() => setIsModalVisible(false)}
                 confirmLoading={loading}
@@ -317,25 +318,25 @@ const UserManagement = () => {
                 <Form form={form} layout="vertical">
                     <Form.Item
                         name="username"
-                        label="用户名"
+                        label="user name"
                         rules={[
-                            { required: true, message: '请输入用户名' },
-                            { min: 4, message: '用户名至少4个字符' },
-                            { max: 20, message: '用户名最多20个字符' }
+                            { required: true, message: 'Please enter user name' },
+                            { min: 4, message: 'min 4 chars' },
+                            { max: 20, message: 'max 20 chars' }
                         ]}
                     >
-                        <Input placeholder="请输入用户名" />
+                        <Input placeholder="Please enter user name" />
                     </Form.Item>
                     <Form.Item
                         name="password"
-                        label="密码"
+                        label="password"
                         rules={[
-                            { required: true, message: '请输入密码' },
-                            { min: 6, message: '密码至少6个字符' },
-                            { max: 20, message: '密码最多20个字符' }
+                            { required: true, message: 'please enter password' },
+                            { min: 6, message: 'min 6 chars' },
+                            { max: 20, message: 'max 20 chars' }
                         ]}
                     >
-                        <Input.Password placeholder="请输入密码" />
+                        <Input.Password placeholder="please enter password" />
                     </Form.Item>
                 </Form>
             </Modal>

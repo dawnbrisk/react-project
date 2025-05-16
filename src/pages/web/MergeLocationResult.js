@@ -1,6 +1,7 @@
 import {useState, useEffect} from "react";
 import {Table, message, Input, DatePicker, Space, Button, Radio} from "antd";
 import {request} from '../../util/request'
+import {useNavigate} from "react-router-dom";
 
 const {RangePicker} = DatePicker;
 const PAGE_SIZE = 10;
@@ -13,7 +14,7 @@ const MergeLocationResult = () => {
     const [name, setName] = useState("");
     const [area,setArea] = useState("");
     const [dateRange, setDateRange] = useState([]);
-
+    const navigate = useNavigate();
     useEffect(() => {
         fetchData(area, name, dateRange);
     }, [area, name, dateRange]);
@@ -75,6 +76,7 @@ const MergeLocationResult = () => {
                     onChange={(dates) => setDateRange(dates)}
                 />
                 <Button type="primary" onClick={handleSearch}>Search</Button>
+                <Button type="primary" onClick={()=>{navigate('/mergeHistory')}}>History</Button>
             </Space>
             <Table
                 columns={columns}

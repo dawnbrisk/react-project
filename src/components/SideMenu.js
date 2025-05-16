@@ -21,6 +21,7 @@ const SideMenu = () => {
                         <Link to="/upLoadExcel">UpLoad Excel</Link>
                     </Menu.Item>
 
+
                     <Menu.Item>
                         <Link to="/picking_record">Picking Record</Link>
                     </Menu.Item>
@@ -40,11 +41,13 @@ const SideMenu = () => {
                 </Menu.SubMenu>
 
                 <Menu.SubMenu  title=" System Administration">
-                    <Menu.Item >
-                        <Link to={"/setting"}>Setting</Link>
-                    </Menu.Item>
+
                     <Menu.Item>
                         <Link to={"/user"}>User List</Link>
+                    </Menu.Item>
+
+                    <Menu.Item key="/doubleWeekCheck">
+                        <Link to="/doubleWeekCheck">Biweekly Check</Link>
                     </Menu.Item>
                 </Menu.SubMenu>
             </Menu>

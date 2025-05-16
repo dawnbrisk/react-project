@@ -24,13 +24,13 @@ import MixingLocation from './pages/mobile/WorkDetail/MixingLocation/MixingLocat
 import Empty_Location from './pages/mobile/WorkDetail/EmptyLocation/EmptyLocation';
 import Picking_Details from './pages/web/picking/PickingDetails';
 import LocationVisualization from './pages/web/visualization/VisualizationPage';
-import LocationVisualizationPlus from './pages/web/visualization/apexCharts';
 import PickingIntervalLineChart from './pages/web/picking/PickingInterval_AllData';
 import WebLogin from './pages/web/login/Login';
 import UpdownDetail from "./pages/web/updownmove/updownDetail";
 import UserManagement from "./pages/web/user/UserList.js";
 import DoubleWeekCheckList from './pages/mobile/WorkDetail/DoubleWeek/doubleWeekCheck'
-
+import MergeHistory from './pages/web/MergeLocation/MergeLocationHistory'
+import CheckedList from './pages/web/biweeklyCheck/CheckedList'
 function App() {
     const isMobile = window.innerWidth <= 768;
 
@@ -76,6 +76,8 @@ function App() {
                             <Route path="/picking_details/:month/:account" element={<Picking_Details />} />
                             <Route path="/picking_interval" element={<PickingIntervalLineChart />} />
                             <Route path="/user" element={<UserManagement />} />
+                            <Route path="/mergeHistory" element={<MergeHistory/>} />
+                            <Route path="/doubleWeekCheck" element={<CheckedList/>} />
                         </Route>
                     </Routes>
                 )}

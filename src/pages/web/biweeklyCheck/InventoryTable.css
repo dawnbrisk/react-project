@@ -1,0 +1,11 @@
+.row-even {
+    background-color: #fafafa;
+}
+
+.row-odd {
+    background-color: #ffffff;
+}
+
+.item-divider {
+    border-top: 2px solid #999 !important;
+}

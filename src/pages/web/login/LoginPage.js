@@ -11,26 +11,32 @@ const LoginPage = () => {
     const handleLogin = () => {
         if (username === 'user' && password === 'password') {
             login();  // 用户名密码正确，调用 login 方法
-            message.success('登录成功');
+            message.success('Success');
         } else {
-            message.error('用户名或密码错误');
+            message.error('Error');
         }
     };
 
     return (
-        <div>
+        <form autoComplete="off">
+            <input type="text" name="fakeusernameremembered" style={{ display: 'none' }} />
+            <input type="password" name="fakepasswordremembered" style={{ display: 'none' }} />
+
             <Input
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                autoComplete="off"
             />
             <Input.Password
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
             />
-            <Button onClick={handleLogin}>登录</Button>
-        </div>
+            <Button onClick={handleLogin}>Sign In</Button>
+        </form>
+
     );
 };
 

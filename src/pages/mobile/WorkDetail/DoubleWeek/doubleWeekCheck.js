@@ -12,7 +12,7 @@ const DoubleWeekCheckList = () => {
 
     useEffect(() => {
         // 获取待处理 SKU 列表
-        request('/api/doubleWeekCheck',{
+        request('/doubleWeekCheck',{
             method:'post',headers: {'Content-Type': 'application/json'}
         })
             .then((response) => {
