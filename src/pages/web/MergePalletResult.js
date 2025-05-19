@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Button, DatePicker, Input, message, Radio, Space, Table} from 'antd';
-
+import {useNavigate} from "react-router-dom";
 import {request} from "../../util/request";
 const PAGE_SIZE = 10;
 
@@ -11,7 +11,7 @@ const MergePalletResult = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [name, setName] = useState("");
     const [dateRange, setDateRange] = useState([]);
-
+    const navigate = useNavigate();
     const {RangePicker} = DatePicker;
     useEffect(() => {
         fetchData( name, dateRange);
@@ -45,7 +45,9 @@ const MergePalletResult = () => {
         {title: "User Name", dataIndex: "user", key: "username"},
         {title: "SKU", dataIndex: "sku", key: "sku"},
         {title: "Pieces", dataIndex: "pieces", key: "pieces"},
+        {title: "From Location", dataIndex: "from_location", key: "from_location"},
         {title: "From Pallet", dataIndex: "from_pallet", key: "from_pallet"},
+        {title: "To Location", dataIndex: "to_location", key: "to_location"},
         {title: "To Pallet", dataIndex: "to_pallet", key: "to_pallet"},
         {title: "Finish?", dataIndex: "is_finish", key: "isFinish"},
         {title: "Time", dataIndex: "update_time", key: "time"},
@@ -67,7 +69,10 @@ const MergePalletResult = () => {
                     onChange={(dates) => setDateRange(dates)}
                 />
                 <Button type="primary" onClick={handleSearch}>Search</Button>
+                <Button type="primary" onClick={()=>{navigate('/mergePalletHistory')}}>History</Button>
             </Space>
+
+
             <Table
                 columns={columns}
                 dataSource={data}
