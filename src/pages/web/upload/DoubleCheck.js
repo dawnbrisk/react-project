@@ -38,13 +38,38 @@ const doubleCheck = async (file) => {
 
 // 导出数据到Excel
 const exportToExcel = (data) => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
+    const headers = Object.keys(data[0] || {});
+    const aoa = [headers];
+    let lastSKU = null;
+
+    data.forEach(row => {
+        const currentSKU = row['item_code'];
+        if (lastSKU !== null && currentSKU !== lastSKU) {
+            aoa.push(new Array(headers.length).fill(''));
+        }
+        const rowData = headers.map(h => row[h]);
+        aoa.push(rowData);
+        lastSKU = currentSKU;
+    });
+
+    const worksheet = XLSX.utils.aoa_to_sheet(aoa);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
-    // 导出为Excel文件
-    XLSX.writeFile(workbook, 'exported_data.xlsx');
+    // 生成日期字符串 YYYYMMDD
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}${mm}${dd}`;
+
+    // 拼接文件名
+    const fileName = `Inventory_Check_List_${dateStr}.xlsx`;
+
+    XLSX.writeFile(workbook, fileName);
 };
+
+
 
 
 export default doubleCheck;

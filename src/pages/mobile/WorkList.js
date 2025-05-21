@@ -143,7 +143,7 @@ const JobSelection = () => {
 
                                 <CalculatorOutline fontSize={48} color='var(--adm-color-success)'/>
 
-                            <span style={{fontSize: 12, marginTop: 4}}>Empty Location</span>
+                            <span style={{fontSize: 12, marginTop: 4}}>Free Location</span>
                         </div>
 
                         <div style={iconContainerStyle}

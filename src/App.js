@@ -31,6 +31,8 @@ import UserManagement from "./pages/web/user/UserList.js";
 import DoubleWeekCheckList from './pages/mobile/WorkDetail/DoubleWeek/doubleWeekCheck'
 import MergeHistory from './pages/web/MergeLocation/MergeLocationHistory'
 import CheckedList from './pages/web/biweeklyCheck/CheckedList'
+import  MergePalletHistory from './pages/web/mergePallet/MergePalletHistory'
+
 function App() {
     const isMobile = window.innerWidth <= 768;
 
@@ -78,6 +80,8 @@ function App() {
                             <Route path="/user" element={<UserManagement />} />
                             <Route path="/mergeHistory" element={<MergeHistory/>} />
                             <Route path="/doubleWeekCheck" element={<CheckedList/>} />
+                            <Route path="/mergePalletHistory" element={<MergePalletHistory/>} />
+
                         </Route>
                     </Routes>
                 )}

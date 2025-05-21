@@ -100,24 +100,7 @@ const StackedBarChart = () => {
 
     return (
         <div style={{ position: "relative" }}>
-            {/* 返回按钮 */}
-            <button
-                onClick={handleBackClick}
-                style={{
-                    position: "absolute",
-                    top: "10px",
-                    left: "10px",
-                    padding: "10px",
-                    backgroundColor: "#007BFF",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "16px"
-                }}
-            >
-                返回
-            </button>
+          
 
             {/* 图表容器 */}
             <div ref={chartRef} style={{ width: "100%", height: "500px" }} />

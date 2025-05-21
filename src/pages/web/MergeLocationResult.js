@@ -57,12 +57,12 @@ const MergeLocationResult = () => {
         <div>
             <Space style={{marginBottom: 16}}>
 
-                <Radio.Group defaultValue='1'  onChange={(e) => setArea(e.target.value)}>
-                    <Space>
-                        <Radio value='1'>A & C</Radio>
-                        <Radio value='2'>B</Radio>
-                    </Space>
-                </Radio.Group>
+                {/*<Radio.Group defaultValue='1'  onChange={(e) => setArea(e.target.value)}>*/}
+                {/*    <Space>*/}
+                {/*        <Radio value='1'>A & C</Radio>*/}
+                {/*        <Radio value='2'>B</Radio>*/}
+                {/*    </Space>*/}
+                {/*</Radio.Group>*/}
 
 
                 <Input

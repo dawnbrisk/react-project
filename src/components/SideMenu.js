@@ -18,7 +18,7 @@ const SideMenu = () => {
                     </Menu.Item>
 
                     <Menu.Item key="/upLoadExcel">
-                        <Link to="/upLoadExcel">UpLoad Excel</Link>
+                        <Link to="/upLoadExcel">UpLoad & Download</Link>
                     </Menu.Item>
 
 
@@ -49,6 +49,7 @@ const SideMenu = () => {
                     <Menu.Item key="/doubleWeekCheck">
                         <Link to="/doubleWeekCheck">Biweekly Check</Link>
                     </Menu.Item>
+                   
                 </Menu.SubMenu>
             </Menu>
         </Sider>
