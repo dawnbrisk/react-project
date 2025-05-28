@@ -24,7 +24,7 @@ const InventoryTable = () => {
         setLoading(true);
         try {
             const response = await request(`/ActionList`,
-                {method:'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({ page, pageSize: PAGE_SIZE, name, dateRange })}
+                {method:'POST',body: JSON.stringify({ page, pageSize: PAGE_SIZE, name, dateRange })}
             );
 
             setData(response.result);

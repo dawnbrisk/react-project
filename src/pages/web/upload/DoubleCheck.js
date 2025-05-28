@@ -19,8 +19,7 @@ const doubleCheck = async (file) => {
 
         // 上传给后端
         try {
-            const response = await request('/api/doubleWeekCheck', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
+            const response = await request('/doubleWeekCheck', {
                 body: JSON.stringify(skus)
             });
 

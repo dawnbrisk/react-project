@@ -16,9 +16,7 @@ const WarehousePage = () => {
     useEffect(() => {
         request("/allLocation", {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            }
+
         }).then((response) => {
             setData(response);
         });

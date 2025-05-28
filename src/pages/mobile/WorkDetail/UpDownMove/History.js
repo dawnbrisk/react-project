@@ -17,7 +17,7 @@ export default function SwipeList() {
     useEffect(() => {
         const params = {username: parsedUser.username, status: "1"};
 
-        request("/selectHistory",{method:'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify(params)})
+        request("/selectHistory",{method:'POST',body: JSON.stringify(params)})
             .then(response => {
 
                 if (Array.isArray(response.result)) {
@@ -36,9 +36,9 @@ export default function SwipeList() {
 
     // 假设你的后端删除 API 路径是 /deleteRecord
     const handleDelete = (id) => {
-        request("/deleteAction", {method:'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({id:id})})
+        request("/deleteAction", {method:'POST',body: JSON.stringify({id:id})})
             .then((response) => {
-                if (response.success) {
+                if (response===1) {
                     setData((prevData) => prevData.filter((item) => item.id !== id));
                     Toast.show("Deleted successfully");
                 } else {

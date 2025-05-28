@@ -41,18 +41,14 @@ const PalletPage = () => {
         try {
             request("/updatePalletFinish", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+
                 body: JSON.stringify(selectedValues),
             }).then(response=>{
                 setSelectedValues({});
                 //跳转到下一个sku
                 request("/getNextPallet",{
                     method: 'GET',  // 使用 GET 请求
-                        headers: {
-                        'Content-Type': 'application/json',  // 可选，根据后端需求设置
-                    }}).then(result=>{
+                       }).then(result=>{
                         console.log("result "+result)
                     navigate(`/WorkDetail_MergePallet/${result.sku}/${encodeURIComponent('todo')}`);
                 })
@@ -85,7 +81,7 @@ const PalletPage = () => {
         if (sku) {
             setLoading(true);
 
-            request(`/MergePalletDetail/${encodeURIComponent(sku)}`, {method:'GET',headers: {'Content-Type': 'application/json'}})  // 后端接口，根据 sku 请求数据
+            request(`/MergePalletDetail/${encodeURIComponent(sku)}`, {method:'GET'})  // 后端接口，根据 sku 请求数据
                 .then((response) => {
                     // 初始化数据
                     setData({

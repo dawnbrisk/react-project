@@ -15,7 +15,6 @@ const judge = ()=> {
         try {
             const response = await fetch("https://your-backend-api.com/submit", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ data: value })
             });
             const data = await response.json();

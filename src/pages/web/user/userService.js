@@ -6,9 +6,8 @@ import {request} from "../../../util/request"; // Your API request utility
 // 获取所有用户
 export const getUsers = async () => {
     try {
-        const response = await request(`/users`);
 
-        return response;
+        return await request(`/users`, {method: 'GET'});
     } catch (error) {
         console.error('获取用户列表失败:', error);
         throw error;
@@ -20,7 +19,6 @@ export const addUser = async (userData) => {
     try {
         return await request(`/addUser`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(userData)
         });
     } catch (error) {
@@ -34,11 +32,7 @@ export const editUser = async (userId, userData) => {
     try {
 
         const response = await request(`/users/${encodeURIComponent(userId)}`, {
-            method: 'POST',
             body: JSON.stringify(userData), // 注意：不是 body / bodyData，而是 data
-            headers: {
-                'Content-Type': 'application/json',
-            },
         });
         return response.data;
     } catch (error) {
@@ -50,7 +44,7 @@ export const editUser = async (userId, userData) => {
 // 废弃/恢复用户
 export const toggleUserStatus = async (userId) => {
     try {
-        const response = await request(`/status/${userId}`);
+        const response = await request(`/status/${userId}`,{method:'GET'});
         return response.data;
     } catch (error) {
         console.error('更新用户状态失败:', error);

@@ -53,9 +53,8 @@ const ExcelUpload = () => {
                 Height: row["Height(cm)"],
             }));
 
-            request("/api/upload", {
+            request("/upload", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formattedData),
             }).then((response) => {
                 setUploading(false);

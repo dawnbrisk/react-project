@@ -66,13 +66,11 @@ const uploadPickingLists = (files: File[]) => {
 
             }
 
-            const response = await request("/api/uploadPickingList", {
+            const response = await request("/uploadPickingList", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(allData)
             });
 
-            if (!response.message) throw new Error("Upload failed");
             message.success("All files uploaded successfully");
         } catch (error) {
             message.error("Upload failed: " + error.message);

@@ -13,8 +13,8 @@ COPY build /app
 
 # 暴露 3000 端口
 #EXPOSE 3000
-EXPOSE 3001
+EXPOSE 3000
 
 # 启动应用
 #CMD ["serve", "-s", "/app", "-l", "3000","--no-clipboard", "--no-port-switching"]
-CMD ["serve", "-s", "/app", "-l", "3001","--no-clipboard", "--no-port-switching"]
+CMD ["serve", "-s", "/app", "-l", "3000","--no-clipboard", "--no-port-switching"]

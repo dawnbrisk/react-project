@@ -13,7 +13,7 @@ const MixingLocation = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await request('/mixingLocation');
+                const res = await request('/mixingLocation',{method:'GET'});
                 setData(res);
                 setPagedData(res.slice(0, PAGE_SIZE));
             } catch (error) {

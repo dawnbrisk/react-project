@@ -18,7 +18,7 @@ const OldestSkuList = () => {
         setPage(1); // 切换 Tab 时回到第一页
         setLoading(true);
         try {
-            const response = await request(`/getOldestSku?type=${encodeURIComponent(key)}`);
+            const response = await request(`/getOldestSku?type=${encodeURIComponent(key)}`,{method:'GET'});
             setSkuList(response || []);
         } catch (error) {
             console.error("Error:", error);

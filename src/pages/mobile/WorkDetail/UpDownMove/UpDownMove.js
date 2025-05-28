@@ -30,8 +30,6 @@ const UpDownMove = () => {
             }
 
             await request('/upDownMoveInsert', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(valuesWithUser),
             })
 
@@ -96,7 +94,6 @@ const UpDownMove = () => {
                                     const json = JSON.parse(val)
                                     if (json.DESC) {
                                         let desc = json.DESC
-                                        console.log("desc:"+desc);
                                         // 无条件去掉前三个字符（不管是不是 101）
                                         if (desc.length > 3) {
                                             desc = desc.substring(3)

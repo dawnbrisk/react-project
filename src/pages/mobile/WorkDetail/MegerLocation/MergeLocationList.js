@@ -1,24 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { NavBar, List, CapsuleTabs, Button } from 'antd-mobile';
+import React, {useEffect, useState} from 'react';
+import {NavBar, List, CapsuleTabs} from 'antd-mobile';
+import { Button } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
-import { Spin } from 'antd';
-import { request } from '../../../../util/request';
 
-const PAGE_SIZE = 10;
+import {Spin} from "antd";
+import {request} from "../../../../util/request";
 
 const LocationList = () => {
-    const navigate = useNavigate();
+
+    const navigate = useNavigate();  // Replace useHistory with useNavigate
     const [skuList, setSkuList] = useState([]);
     const [doneList, setDoneList] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    const [todoPage, setTodoPage] = useState(1);
+    const [skuPage, setSkuPage] = useState(1);
     const [donePage, setDonePage] = useState(1);
+    const pageSize = 10;
+    const paginatedSkuList = skuList.slice((skuPage - 1) * pageSize, skuPage * pageSize);
+    const paginatedDoneList = doneList.slice((donePage - 1) * pageSize, donePage * pageSize);
+
+
 
     useEffect(() => {
-        request('/locationList')
+        // Fetch SKU data from the backend
+        request('/locationList',{method:'GET'})
             .then(response => {
-                setSkuList(response || []);
+                setSkuList(response);
                 setLoading(false);
             })
             .catch(error => {
@@ -28,18 +34,19 @@ const LocationList = () => {
     }, []);
 
     useEffect(() => {
+        // Fetch SKU data from the backend
         const userStr = localStorage.getItem('user');
         const userInfo = JSON.parse(userStr);
 
-        request('/history', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username: userInfo.username }),
-        })
+        request('/history',{
+
+                body: JSON.stringify({
+                    username: userInfo.username
+                }),
+            }
+        )  // Replace with your actual API endpoint
             .then(response => {
-                setDoneList(response || []);
+                setDoneList(response);
                 setLoading(false);
             })
             .catch(error => {
@@ -48,111 +55,85 @@ const LocationList = () => {
             });
     }, []);
 
-    if (loading) return <Spin />;
 
-    const todoTotalPages = Math.ceil(skuList.length / PAGE_SIZE);
-    const doneTotalPages = Math.ceil(doneList.length / PAGE_SIZE);
-
-    const getPagedData = (list, page) =>
-        list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    if (loading) {
+        return <Spin />;
+    }
 
     return (
         <div>
             <NavBar back="Back" onBack={() => navigate(`/WorkList`)}>
                 Work Detail
             </NavBar>
-
+            {/* Tabs 横向导航栏 */}
             <CapsuleTabs>
-                <CapsuleTabs.Tab
-                    title={`Todo List(${skuList.length})`}
-                    key="todo"
-                >
+                <CapsuleTabs.Tab title={`Todo List(${skuList.length})`} key="todo">
                     <List renderHeader={() => 'SKU列表'}>
-                        {getPagedData(skuList, todoPage).map((sku) => (
+                        {paginatedSkuList.map((sku) => (
                             <List.Item
                                 key={sku}
-                                onClick={() =>
-                                    navigate(
-                                        `/WorkDetail_MergeLocation/${sku}/${encodeURIComponent('todo')}`
-                                    )
-                                }
+                                onClick={() => {
+                                    console.log('点击了 SKU：', sku);
+                                    navigate(`/WorkDetail_MergeLocation/${sku}/${encodeURIComponent('todo')}`);
+                                }}
                             >
                                 {`SKU: ${sku}`}
                             </List.Item>
                         ))}
                     </List>
-
-                    {/* 分页按钮 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 20px' }}>
                         <Button
                             size="small"
-                            onClick={() => setTodoPage((prev) => Math.max(1, prev - 1))}
-                            disabled={todoPage === 1}
+                            disabled={skuPage === 1}
+                            onClick={() => setSkuPage(skuPage - 1)}
                         >
                             上一页
                         </Button>
-                        <span style={{ alignSelf: 'center' }}>
-                            第 {todoPage} / {todoTotalPages} 页
-                        </span>
+                        <span>{`第 ${skuPage} 页 / 共 ${Math.ceil(skuList.length / pageSize)} 页`}</span>
                         <Button
                             size="small"
-                            onClick={() =>
-                                setTodoPage((prev) =>
-                                    Math.min(todoTotalPages, prev + 1)
-                                )
-                            }
-                            disabled={todoPage === todoTotalPages}
+                            disabled={skuPage >= Math.ceil(skuList.length / pageSize)}
+                            onClick={() => setSkuPage(skuPage + 1)}
                         >
                             下一页
                         </Button>
                     </div>
                 </CapsuleTabs.Tab>
 
-                <CapsuleTabs.Tab
-                    title={`Today History(${doneList.length})`}
-                    key="done"
-                >
+                <CapsuleTabs.Tab title={`Today History(${doneList.length})`} key="done">
                     <List renderHeader={() => 'History'}>
-                        {getPagedData(doneList, donePage).map((sku) => (
+                        {paginatedDoneList.map((sku) => (
                             <List.Item
                                 key={sku}
                                 onClick={() =>
-                                    navigate(
-                                        `/WorkDetail_MergeLocation/${sku}/${encodeURIComponent('done')}`
-                                    )
+                                    navigate(`/WorkDetail_MergeLocation/${sku}/${encodeURIComponent('done')}`)
                                 }
                             >
                                 {`SKU: ${sku}`}
                             </List.Item>
                         ))}
                     </List>
-
-                    {/* 分页按钮 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 20px' }}>
                         <Button
                             size="small"
-                            onClick={() => setDonePage((prev) => Math.max(1, prev - 1))}
                             disabled={donePage === 1}
+                            onClick={() => setDonePage(donePage - 1)}
                         >
                             上一页
                         </Button>
-                        <span style={{ alignSelf: 'center' }}>
-                            第 {donePage} / {doneTotalPages} 页
-                        </span>
+                        <span>{`第 ${donePage} 页 / 共 ${Math.ceil(doneList.length / pageSize)} 页`}</span>
                         <Button
                             size="small"
-                            onClick={() =>
-                                setDonePage((prev) =>
-                                    Math.min(doneTotalPages, prev + 1)
-                                )
-                            }
-                            disabled={donePage === doneTotalPages}
+                            disabled={donePage >= Math.ceil(doneList.length / pageSize)}
+                            onClick={() => setDonePage(donePage + 1)}
                         >
                             下一页
                         </Button>
                     </div>
                 </CapsuleTabs.Tab>
+
             </CapsuleTabs>
+
         </div>
     );
 };

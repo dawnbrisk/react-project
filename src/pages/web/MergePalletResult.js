@@ -23,7 +23,6 @@ const MergePalletResult = () => {
             const response = await request(`/getMergeSteps`,
                 {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({name, dateRange})
                 }
             );

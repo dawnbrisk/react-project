@@ -14,7 +14,7 @@ const UserMovementCharts: React.FC = () => {
 
 
 
-        request('/AverageMovePerHour').then((response)=>{
+        request('/AverageMovePerHour',{method:'GET'}).then((response)=>{
             setAverageData(response);
             setLoading(false); // Stop loading when data is fetched
         }).catch((error)=>{

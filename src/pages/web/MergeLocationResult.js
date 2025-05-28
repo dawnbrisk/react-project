@@ -2,6 +2,7 @@ import {useState, useEffect} from "react";
 import {Table, message, Input, DatePicker, Space, Button, Radio} from "antd";
 import {request} from '../../util/request'
 import {useNavigate} from "react-router-dom";
+import dayjs from "dayjs";
 
 const {RangePicker} = DatePicker;
 const PAGE_SIZE = 10;
@@ -25,7 +26,6 @@ const MergeLocationResult = () => {
             const response = await request(`/getAllSteps`,
                 {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({area, name, dateRange})
                 }
             );
@@ -57,14 +57,6 @@ const MergeLocationResult = () => {
         <div>
             <Space style={{marginBottom: 16}}>
 
-                {/*<Radio.Group defaultValue='1'  onChange={(e) => setArea(e.target.value)}>*/}
-                {/*    <Space>*/}
-                {/*        <Radio value='1'>A & C</Radio>*/}
-                {/*        <Radio value='2'>B</Radio>*/}
-                {/*    </Space>*/}
-                {/*</Radio.Group>*/}
-
-
                 <Input
                     placeholder="Search Name"
                     value={name}
@@ -73,6 +65,10 @@ const MergeLocationResult = () => {
                 />
 
                 <RangePicker
+                    showTime={{
+                        hideDisabledOptions: true,
+                        defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
+                    }}
                     onChange={(dates) => setDateRange(dates)}
                 />
                 <Button type="primary" onClick={handleSearch}>Search</Button>

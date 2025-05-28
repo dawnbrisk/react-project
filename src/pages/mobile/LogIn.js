@@ -10,18 +10,15 @@ const Login = () => {
     const onSubmit = async (values) => {
         try {
             request('/login', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
+                method: 'POST',
                 body: JSON.stringify(values)
             })
                 .then(response => {
-                    localStorage.setItem('token', response.token);
+
+                    localStorage.setItem('token', response);
                     localStorage.setItem('user', JSON.stringify(values)); // 缓存账号密码
 
-                    if (response.message === "Success") {
-                        navigate('/WorkList');
-                    } else {
-                        Toast.show({ content: " failed, please try again.", duration: 2000 });
-                    }
+                    navigate('/WorkList');
                 })
 
         } catch (error) {

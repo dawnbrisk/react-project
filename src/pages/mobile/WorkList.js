@@ -13,7 +13,6 @@ import {request} from "../../util/request";
 const JobSelection = () => {
     const navigate = useNavigate();
     const [mixingLocationQty, setMixingLocationQty] = useState([]);
-    const [emptyLocationQty, setEmptyLocationQty] = useState([]);
     const [date, setDate] = useState([]);
     const iconContainerStyle = {
         display: "flex",
@@ -27,15 +26,12 @@ const JobSelection = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                request('/mixingLocation').then(response=>{
+                request('/mixingLocation',{method:'GET'}).then(response=>{
                     setMixingLocationQty(response);
                 })
 
-                // request('/emptyLocationList').then(response=>{
-                //     setEmptyLocationQty(response);
-                // })
 
-                request('/getDate').then(response=>{
+                request('/getDate',{method:'GET'}).then(response=>{
                     setDate(response.date);
                 })
 
@@ -151,7 +147,7 @@ const JobSelection = () => {
 
                             <EyeOutline fontSize={48} color='var(--adm-color-success)'/>
 
-                            <span style={{fontSize: 12, marginTop: 4}}>Double Week</span>
+                            <span style={{fontSize: 12, marginTop: 4}}>Biweekly Check</span>
                         </div>
 
 

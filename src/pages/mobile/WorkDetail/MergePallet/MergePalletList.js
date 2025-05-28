@@ -17,7 +17,7 @@ const PalletList = () => {
         try {
             const response = await request('/areaList', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+
                 body: JSON.stringify({ selectedTab: key }),
             });
             setSkuList(response || []);

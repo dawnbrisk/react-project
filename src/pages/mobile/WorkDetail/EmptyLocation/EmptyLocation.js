@@ -12,7 +12,7 @@ const EmptyLocation = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await request('/emptyLocationList');
+                const response = await request('/emptyLocationList',{method:'GET'});
                 setData(response);
             } catch (error) {
                 Toast.show('Failed to fetch data');

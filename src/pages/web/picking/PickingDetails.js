@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { request } from "../../../util/request"; // Your API request utility
 
 const StackedBarChart = () => {
     const chartRef = useRef(null);
     const { month, account } = useParams(); // 从路由获取参数
-    const navigate = useNavigate(); // 获取导航函数
+
 
     const [rawData, setRawData] = useState([]);
 
@@ -93,10 +93,7 @@ const StackedBarChart = () => {
         return () => chart.dispose(); // 清理
     }, [rawData, account]);
 
-    // 返回上一级页面的处理函数
-    const handleBackClick = () => {
-        navigate(-1); // -1 代表返回上一页
-    };
+
 
     return (
         <div style={{ position: "relative" }}>

@@ -13,21 +13,14 @@ const LoginPage = () => {
     const navigate = useNavigate();
 
     const onFinish = async (values) => {
-        try {
-            const res = await request('/login', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values)
-            });
-            if (res.message === "Success") {
-                message.success('Success');
-                navigate('/up-down-move');
-            } else {
-                message.error('Failed, Please recheck the account and password');
-            }
-        } catch (err) {
-            message.error('Failed, Please recheck the account and password');
-        }
+        const data = await request("/login", {
+            method: "POST",
+            body: JSON.stringify(values),
+        });
+
+        localStorage.setItem("token", data);
+        navigate('/up-down-move');
+
     };
 
     return (

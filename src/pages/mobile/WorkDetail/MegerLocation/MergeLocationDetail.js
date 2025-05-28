@@ -1,221 +1,187 @@
-import React, { useEffect, useState } from 'react';
-import { Button, CapsuleTabs, List, NavBar, Selector, Toast } from 'antd-mobile';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Modal, Radio, Space } from 'antd';
-import { request } from '../../../../util/request';
+import React, {useEffect, useState} from 'react';
+import {Button, CapsuleTabs, List, NavBar, Selector, Toast} from 'antd-mobile';
+import { useNavigate, useParams} from 'react-router-dom';
+import {Modal, Radio, Space} from "antd";
+import {request} from "../../../../util/request";
 
 
-
-import {AddCircleOutline,DeleteOutline } from "antd-mobile-icons";
 const LocationPage = () => {
-    const { sku, key } = useParams();
-    const navigate = useNavigate();
 
-    const [data, setData] = useState({ steps: [], expectedLocation: [], currentLocation: [] });
+    const {sku,key} = useParams();  // 获取动态路由中的 sku 参数
+    const navigate = useNavigate();  // Replace useHistory with useNavigate
+    // 存储从后端获取的数据
+    const [data, setData] = useState({ steps: [], expectedLocation: [] ,currentLocation:[]});
+    // 存储用户选择的值（key: id, value: 选择内容）
     const [selectedValues, setSelectedValues] = useState({});
+
     const [loading, setLoading] = useState(false);
 
-    const [reasonMap, setReasonMap] = useState({}); // id -> reason index
-    const [reasonModal, setReasonModal] = useState({ open: false, targetId: null, targetType: null });
-    const [selectedReasonIndex, setSelectedReasonIndex] = useState(null);
-    const [customReasons, setCustomReasons] = useState([
-        { index: 1, label: "Big Pallet, they are next to each other" },
-        { index: 2, label: "Nothing found" },
-        { index: 3, label: "No space" },
-    ]);
-
-    const [newReasonInput, setNewReasonInput] = useState('');
-    const [showReasonInput, setShowReasonInput] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedReason, setSelectedReason] = useState(null);
 
 
+    // 用户选择时更新状态
     const handleSelectorChange = (id, value, type) => {
-        if (value === 'N') {
-            setReasonModal({ open: true, targetId: id, targetType: type });
-        } else {
-            setSelectedValues(prev => ({
+        setSelectedValues(prev => {
+            return {
                 ...prev,
                 [type]: {
-                    ...(prev[type] || {}),
-                    [id]: 'Y',
+                    ...(prev[type] || {}),  // Ensure that previous data for the `type` is not lost
+                    [id]: value,            // Update the current selected item
                 }
-            }));
-            setReasonMap(prev => {
-                const updated = { ...prev };
-                delete updated[id];
-                return updated;
-            });
-        }
-    };
-
-    const renderSelector = (id, type, defaultValue) => {
-        const value = selectedValues?.[type]?.[id] || defaultValue;
-        const reasonIndex = reasonMap?.[id];
-
-        return (
-            <Selector
-                columns={2}
-                options={[
-                    { label: 'Y', value: 'Y' },
-                    { label: reasonIndex ? <span style={{ color: 'red' }}>{reasonIndex}</span> : 'N', value: 'N' }
-                ]}
-                value={[value]}
-                onChange={val => handleSelectorChange(id, val[0], type)}
-            />
-        );
-    };
-
-    const handleAddReason = () => {
-        if (!newReasonInput.trim()) return;
-        const newIndex = (customReasons[customReasons.length - 1]?.index || 0) + 1;
-        setCustomReasons(prev => [...prev, { index: newIndex, label: newReasonInput.trim() }]);
-        setNewReasonInput('');
-    };
-
-    const handleDeleteReason = (indexToDelete) => {
-        const updated = customReasons.filter(r => r.index !== indexToDelete).map((r, i) => ({
-            index: i + 1,
-            label: r.label
-        }));
-        setCustomReasons(updated);
+            };
+        });
     };
 
 
-    const handleReasonConfirm = () => {
-        const { targetId, targetType } = reasonModal;
-        if (!selectedReasonIndex) {
-            Toast.show({ content: 'Please select a reason' });
-            return;
-        }
 
-        setSelectedValues(prev => ({
-            ...prev,
-            [targetType]: {
-                ...(prev[targetType] || {}),
-                [targetId]: 'N',
-            }
-        }));
-        setReasonMap(prev => ({
-            ...prev,
-            [targetId]: selectedReasonIndex,
-        }));
-
-        setReasonModal({ open: false, targetId: null, targetType: null });
-        setSelectedReasonIndex(null);
-    };
-
+    // 提交数据到后端
     const handleSubmit = async () => {
         try {
+
+
             const userStr = localStorage.getItem('user');
             const userInfo = JSON.parse(userStr);
             const requestData = {
                 ...selectedValues,
-                user: { username: userInfo.username },
-                reasons: reasonMap,
+                user: {
+                    username: userInfo.username
+                }
             };
 
-            await request("/updateFinish", {
+
+            request("/updateFinish", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(requestData),
+            }).then(response=>{
+                Toast.show({content: "success"});
+                setSelectedValues({});
+                //跳转到下一个sku
+                request("/getNext",{method:'GET'}).then(result=>{
+                    navigate(`/WorkDetail_MergeLocation/${result.sku}`);
+                })
             });
-
-            Toast.show({ content: "success" });
-            setSelectedValues({});
-            setReasonMap({});
-
-            const result = await request("/getNext");
-            navigate(`/WorkDetail_MergeLocation/${result.sku}`);
         } catch (error) {
             console.log(error);
-            Toast.show({ content: 'Error!' });
+            Toast.show({content: 'Error!'});
         }
     };
 
-    const handleNextClick = () => {
+    // 点击 Next 按钮时将数据传递给后端
+    const handleNextClick = async () => {
+
+        // 发送请求到后端
         Modal.confirm({
             title: '',
             content: 'Is it finished？',
             confirmText: 'Yes',
             cancelText: 'No',
             onCancel: () => console.log('否'),
-            onOk: async () => await handleSubmit(),
-        });
+            onOk: async () => {
+                await handleSubmit(selectedValues); // Only call handleNext when onOk is confirmed
+            },
+        })
     };
 
+    // 使用 useEffect 在组件加载时请求数据
     useEffect(() => {
         if (sku) {
             setLoading(true);
+
             request(`/skuDetail/${encodeURIComponent(sku)}`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'GET',  // 使用 GET 请求
             }).then((response) => {
+                // 初始化数据
                 setData({
                     steps: response.steps || [],
                     expectedLocation: response.expectedLocation || [],
                     currentLocation: response.currentLocation || []
                 });
-            }).catch(() => {
-                Toast.show('Error fetching data');
-            }).finally(() => {
-                setLoading(false);
-            });
+            })
+                .catch((error) => {
+                    Toast.show('Error fetching data');
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         }
-    }, [sku]);
+    }, [sku]); // 依赖 sku，sku 变化时重新请求
 
-    const handleSkipReasonConfirm = (reason) => {
-        request("/skip", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reasonType: reason, sku }),
-        }).then(async () => {
-            const result = await request("/getNext");
-            navigate(`/WorkDetail_MergeLocation/${result.sku}`);
-        });
-    };
+    if (loading) {
+        return <div >Loading...</div>;
+    }
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedSkipReason, setSelectedSkipReason] = useState(null);
+    const selectorOptions = [
+        {label: 'Y', value: 'Y'},
+        {label: 'N', value: 'N'},
+    ];
 
-    const handleSkipOk = () => {
-        if (!selectedSkipReason) {
+
+    const handleOk = () => {
+        if (selectedReason === null) {
             Modal.warning({
                 title: "Please select a reason",
                 content: "You need to select a reason before skipping.",
             });
             return;
         }
-        handleSkipReasonConfirm(selectedSkipReason);
+
+        //skip
+        request("/skip",{
+            body: JSON.stringify({reasonType: selectedReason,sku:sku}),
+        }).then(()=>{
+            setSelectedReason(null);
+            request("/getNext",{method:'GET'}).then(result=>{
+                navigate(`/WorkDetail_MergeLocation/${result.sku}`);
+            })
+        })
+
         setIsModalOpen(false);
-        setSelectedSkipReason(null);
+        // update sku
+
     };
 
-    if (loading) return <div>Loading...</div>;
 
     return (
         <div>
-            <NavBar back="Back" onBack={() => navigate(`/WorkDetail_MergeLocation_list`)} style={{ backgroundColor: '#007bff', color: 'white' }}>
+            <NavBar back="Back" onBack={() => navigate(`/WorkDetail_MergeLocation_list`)}
+                    style={{backgroundColor: '#007bff', color: 'white'}}>
                 {sku}
             </NavBar>
 
-            {/* steps and current locations */}
+
             <CapsuleTabs>
-                <CapsuleTabs.Tab title='Moving Steps' key='steps'>
+                {/* moving steps */}
+                <CapsuleTabs.Tab title='Moving Steps' description='' key='vegetables'>
                     <List>
                         {data?.steps.map((step, index) => (
-                            <List.Item key={index} extra={renderSelector(step.id, "steps", step.isFinish)}>
+                            <List.Item key={index} extra={
+                                <Selector
+                                    columns={2}
+                                    options={selectorOptions}
+                                    value={selectedValues?.[step.id]} // 绑定当前 step.id 的选择值
+                                    defaultValue={[step.isFinish]}
+                                    onChange={value => handleSelectorChange(step.id, value[0],"steps")} // 监听变化
+                                />
+                            }>
                                 <p>
-                                    Move <span style={{ color: 'red' }}>{step.pallet_count}</span> pallets <br />
-                                    from <span style={{ color: 'red' }}>{step.from_location}</span> to
-                                    <span style={{ color: 'blue' }}> {step.to_location}</span>
+                                    Move <span style={{ color: 'red' }}>{step.pallet_count}</span> pallets <br/> from
+                                    <span style={{ color: 'red' }}> {step.from_location} </span> to
+                                    <span style={{ color: 'blue' }}> {step.to_location} </span>
                                 </p>
+
                             </List.Item>
                         ))}
                     </List>
                 </CapsuleTabs.Tab>
 
-                <CapsuleTabs.Tab title='Current Location' key='current'>
+                {/*Current Location */}
+                <CapsuleTabs.Tab title='Current Location' description='' key='fruits'>
                     <List>
-                        {data?.currentLocation?.map((item, index) => (
+                        {(data?.currentLocation?? []).map((item, index) => (
                             <List.Item key={index}>{item.location}：{item.pallet_qty} pallets</List.Item>
                         ))}
                     </List>
@@ -225,120 +191,62 @@ const LocationPage = () => {
 
             {/*<! 预期库位 >*/}
             <CapsuleTabs>
-                <CapsuleTabs.Tab title='Expected Location' key='expected'>
+                <CapsuleTabs.Tab title='Expected Location' description='' key='fruits'>
                     <List>
                         {data?.expectedLocation.map((item, index) => (
                             <List.Item
                                 key={index}
-                                extra={item?.pallet_qty === 0
-                                    ? renderSelector(item.id, "expectedLocation", item.isFinish)
-                                    : null}
+                                extra={
+                                    item?.pallet_qty === 0 ? (
+                                        <Selector
+                                            columns={2}
+                                            options={selectorOptions}
+                                            value={selectedValues?.[item.id]} // 绑定当前项的选择值
+                                            defaultValue={[item.isFinish]}
+                                            onChange={value => handleSelectorChange(item.id, value[0], "expectedLocation")} // 监听选择变化
+                                        />
+                                    ) : null
+                                }
                             >
                                 {item.location}：{item.pallet_qty} pallets
                             </List.Item>
                         ))}
                     </List>
                 </CapsuleTabs.Tab>
+
             </CapsuleTabs>
 
             {key !== 'done' && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', padding: '0 10px' }}>
-                    <Button color="success" onClick={() => window.history.back()}>Last</Button>
-                    <Button color="warning" onClick={() => setIsModalOpen(true)}>Skip</Button>
-                    <Button color="primary" onClick={handleNextClick}>Next</Button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <Button color="success" onClick={() => window.history.back()}>
+                        Last
+                    </Button>
+                    <Button color="success" onClick={()=>{setIsModalOpen(true);}}>
+                        Skip
+                    </Button>
+                    <Button color="success" onClick={handleNextClick}>
+                        Next
+                    </Button>
+
+
+                    <Modal
+                        title="Why do you want to skip?"
+                        open={isModalOpen}
+                        onOk={handleOk}
+                        onCancel={()=>{setIsModalOpen(false);}}
+                    >
+                        <Radio.Group onChange={(e) => setSelectedReason(e.target.value)}>
+                            <Space direction="vertical">
+                                <Radio value="1">Big Pallet, they are next to each other </Radio>
+                                <Radio value="2">Nothing found, including on the location code</Radio>
+                                <Radio value="3">Nothing found, except on the location code</Radio>
+                                <Radio value="4">other</Radio>
+                            </Space>
+                        </Radio.Group>
+                    </Modal>
+
                 </div>
             )}
-
-            {/* 跳过 SKU 的原因弹窗 */}
-            <Modal
-                title="Why skip?"
-                open={isModalOpen}
-                onOk={handleSkipOk}
-                onCancel={() => setIsModalOpen(false)}
-            >
-                <Radio.Group onChange={(e) => setSelectedSkipReason(e.target.value)}>
-                    <Space direction="vertical">
-                        {customReasons.map(r => (
-                            <Radio key={r.index} value={r.index}>{r.index}. {r.label}</Radio>
-                        ))}
-                    </Space>
-                </Radio.Group>
-            </Modal>
-
-            {/* 选择 N 的原因弹窗 */}
-            <Modal
-                title="Why Click 'N' "
-                open={reasonModal.open}
-                onOk={handleReasonConfirm}
-                onCancel={() => {
-                    setReasonModal({ open: false, targetId: null, targetType: null });
-                    setSelectedReasonIndex(null);
-                    setShowReasonInput(false);
-                }}
-            >
-                <Radio.Group
-                    onChange={(e) => setSelectedReasonIndex(e.target.value)}
-                    value={selectedReasonIndex}
-                    style={{ width: '100%' }}
-                >
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                        {customReasons.map(reason => (
-                            <div
-                                key={reason.index}
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}
-                            >
-                                <Radio value={reason.index}>
-                                    {reason.index}. {reason.label}
-                                </Radio>
-
-                                <span
-                                    style={{
-                                        color: 'red',
-                                        cursor: 'pointer',
-                                        fontSize: '16px',
-                                        padding: '0 4px'
-                                    }}
-                                    onClick={() => handleDeleteReason(reason.index)}
-                                >
-                    <DeleteOutline />️
-                </span>
-                            </div>
-                        ))}
-                    </Space>
-                </Radio.Group>
-
-
-
-                {/* 添加新原因 */}
-                <div style={{ marginTop: 12 }}>
-                    {!showReasonInput ? (
-                        <AddCircleOutline
-                            style={{ fontSize: 16, cursor: 'pointer' }}
-                            onClick={() => setShowReasonInput(true)}
-                        />
-
-                    ) : (
-                        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                            <input
-                                value={newReasonInput}
-                                onChange={e => setNewReasonInput(e.target.value)}
-                                placeholder="New reason"
-                                style={{ flex: 1, padding: 4 }}
-                            />
-                            <AddCircleOutline
-                                style={{ fontSize: 16, color: 'green', cursor: 'pointer' }}
-                                onClick={handleAddReason}
-                            />
-                        </div>
-                    )}
-                </div>
-            </Modal>
-
 
         </div>
     );
