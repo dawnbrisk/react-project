@@ -57,26 +57,12 @@ const JobSelection = () => {
     const tabs = [
         {
             key: 'home',
-            title: '首页',
             icon: <AppOutline />,
             badge: Badge.dot,
         },
-        {
-            key: 'todo',
-            title: '待办',
-            icon: <UnorderedListOutline />,
 
-        },
-        {
-            key: 'message',
-            title: '消息',
-            icon: (active: boolean) =>
-                active ? <MessageFill /> : <MessageOutline />,
-
-        },
         {
             key: 'personalCenter',
-            title: '我的',
             icon: <UserOutline />,
         },
     ]
