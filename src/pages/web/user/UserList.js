@@ -198,7 +198,7 @@ const UserManagement = () => {
             dataIndex: 'name',
             key: 'name',
             render: (text, record) => (
-                <span style={{ textDecoration: record.disabled ? 'line-through' : 'none' }}>
+                <span style={{ textDecoration:  record.status ==="1" ? 'line-through' : 'none' }}>
           {text}
         </span>
             ),
@@ -209,7 +209,7 @@ const UserManagement = () => {
             key: 'password',
             render: (text, record) => (
                 <Space>
-          <span style={{ textDecoration: record.disabled ? 'line-through' : 'none' }}>
+          <span style={{ textDecoration: record.status ==="1" ? 'line-through' : 'none' }}>
             {passwordVisible[record.id] ? text : text.replace(/./g, '*')}
           </span>
                     <Button
