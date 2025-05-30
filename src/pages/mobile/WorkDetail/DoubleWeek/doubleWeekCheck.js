@@ -61,7 +61,7 @@ const DoubleWeekCheckList = () => {
 
     return (
         <div>
-            <NavBar back="返回" onBack={() => navigate('/WorkList')}>
+            <NavBar back="Back" onBack={() => navigate('/WorkList')}>
                 Biweekly Check
             </NavBar>
             <CapsuleTabs>
@@ -90,15 +90,15 @@ const DoubleWeekCheckList = () => {
                             disabled={skuPage === 1}
                             onClick={() => setSkuPage(skuPage - 1)}
                         >
-                            上一页
+                            Last Page
                         </Button>
-                        <span>{`第 ${skuPage} 页，共 ${Math.ceil(skuList.length / pageSize)} 页`}</span>
+                        <span>{`Page ${skuPage} of ${Math.ceil(skuList.length / pageSize)}`}</span>
                         <Button
                             size="small"
                             disabled={skuPage >= Math.ceil(skuList.length / pageSize)}
                             onClick={() => setSkuPage(skuPage + 1)}
                         >
-                            下一页
+                            Next Page
                         </Button>
                     </div>
                 </CapsuleTabs.Tab>

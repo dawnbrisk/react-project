@@ -87,15 +87,15 @@ const LocationList = () => {
                             disabled={skuPage === 1}
                             onClick={() => setSkuPage(skuPage - 1)}
                         >
-                            上一页
+                            Last
                         </Button>
-                        <span>{`第 ${skuPage} 页 / 共 ${Math.ceil(skuList.length / pageSize)} 页`}</span>
+                        <span>{`Page ${skuPage}  /  ${Math.ceil(skuList.length / pageSize)} `}</span>
                         <Button
                             size="small"
                             disabled={skuPage >= Math.ceil(skuList.length / pageSize)}
                             onClick={() => setSkuPage(skuPage + 1)}
                         >
-                            下一页
+                            Next
                         </Button>
                     </div>
                 </CapsuleTabs.Tab>
@@ -119,15 +119,15 @@ const LocationList = () => {
                             disabled={donePage === 1}
                             onClick={() => setDonePage(donePage - 1)}
                         >
-                            上一页
+                            Last
                         </Button>
-                        <span>{`第 ${donePage} 页 / 共 ${Math.ceil(doneList.length / pageSize)} 页`}</span>
+                        <span>{`Page ${donePage} /  ${Math.ceil(doneList.length / pageSize)} `}</span>
                         <Button
                             size="small"
                             disabled={donePage >= Math.ceil(doneList.length / pageSize)}
                             onClick={() => setDonePage(donePage + 1)}
                         >
-                            下一页
+                           Next
                         </Button>
                     </div>
                 </CapsuleTabs.Tab>

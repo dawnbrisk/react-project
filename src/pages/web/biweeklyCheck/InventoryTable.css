@@ -1,11 +1,23 @@
-.row-even {
-    background-color: #fafafa;
+/* 原有行背景色 */
+.row-even td {
+    background-color: #f9f9f9;
 }
 
-.row-odd {
+.row-odd td {
     background-color: #ffffff;
 }
 
-.item-divider {
-    border-top: 2px solid #999 !important;
+/* 第一列 item_code 不设背景 */
+.row-even td:first-child,
+.row-odd td:first-child {
+    background-color: transparent !important;
+}
+
+/* 为合并的 item_code 单元格添加样式 */
+.item-code-cell {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #d9d9d9;
+    background-color: #fafafa;
 }

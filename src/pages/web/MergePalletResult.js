@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {Button, DatePicker, Input, message, Radio, Space, Table} from 'antd';
 import {useNavigate} from "react-router-dom";
 import {request} from "../../util/request";
+import dayjs from "dayjs";
 const PAGE_SIZE = 10;
 
 const MergePalletResult = () => {
@@ -65,6 +66,10 @@ const MergePalletResult = () => {
                 />
 
                 <RangePicker
+                    showTime={{
+                        hideDisabledOptions: true,
+                        defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
+                    }}
                     onChange={(dates) => setDateRange(dates)}
                 />
                 <Button type="primary" onClick={handleSearch}>Search</Button>

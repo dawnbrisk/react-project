@@ -29,7 +29,7 @@ export async function request(endpoint, options = {}) {
             // 先判断 HTTP 状态码
             if (res.status === 403) {
                 localStorage.removeItem("token");
-                alert("登录已过期，请重新登录哦。");
+                alert("Login expired. Please sign in again.");
                 window.location.href = "/login";
                 throw new Error("403 Forbidden - 需要重新登录");
             }
@@ -40,7 +40,7 @@ export async function request(endpoint, options = {}) {
             // data 是后端返回的 JSON 对象
             if (response.code === 403) {
                 localStorage.removeItem("token");
-                alert("登录已过期，请重新登录吧。");
+                alert("Login expired. Please sign in again.");
                 window.location.href = "/login";
                 throw new Error("403 Forbidden - 需要重新登录");
             }

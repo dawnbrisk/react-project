@@ -7,7 +7,7 @@ const DoubleWeeksCheckTable = () => {
     const [data, setData] = useState([]);
     const [pagination, setPagination] = useState({
         current: 1,
-        pageSize: 10,
+        pageSize: 15,
         total: 0
     });
 
@@ -16,39 +16,74 @@ const DoubleWeeksCheckTable = () => {
     }, [pagination.current, pagination.pageSize]);
 
     const fetchData = async (page, size) => {
-        const result = await request(`/double_weeks_check?page=${page}&size=${size}`,{method:'GET'});
+        const result = await request(`/double_weeks_check?page=${page}&size=${size}`, { method: 'GET' });
+        const rawData = result.records || [];
+        const processed = preprocessData(rawData);
 
-        setData(result.records || []);
+        setData(processed);
         setPagination(prev => ({
             ...prev,
             total: result.total || 0
         }));
     };
 
+
+
+    const preprocessData = (records) => {
+        const countMap = {};
+        records.forEach(item => {
+            countMap[item.item_code] = (countMap[item.item_code] || 0) + 1;
+        });
+
+        const seen = {};
+        return records.map((item, index) => {
+            if (!seen[item.item_code]) {
+                seen[item.item_code] = true;
+                return { ...item, rowSpan: countMap[item.item_code] };
+            } else {
+                return { ...item, rowSpan: 0 };
+            }
+        });
+    };
+
+
+
+
+
     const columns = [
-        { title: 'Item Code', dataIndex: 'item_code', key: 'item_code' },
+        {
+            title: 'Item Code',
+            dataIndex: 'item_code',
+            key: 'item_code',
+            render: (text, row, index) => ({
+                children: text,
+                props: {
+                    rowSpan: row.rowSpan,
+                    className: row.rowSpan > 0 ? 'item-code-cell' : '', // 只有显示的合并单元格才加样式
+                }
+            })
+        },
         { title: 'Location Code', dataIndex: 'location_code', key: 'location_code' },
         { title: 'Pallet Code', dataIndex: 'pallet_code', key: 'pallet_code' },
         { title: 'Current Qty', dataIndex: 'current_inventory_qty', key: 'current_inventory_qty' },
         {
-            title: 'Checked Qty',
+            title: 'Checked Result',
             dataIndex: 'checked_qty',
             key: 'checked_qty',
             render: (text, record) => {
-                const mismatch = record.current_inventory_qty !== record.checked_qty;
+                const mismatch = record.current_inventory_qty !== Number(record.checked_qty);
                 return (
                     <span style={{ color: mismatch ? 'red' : 'inherit', fontWeight: mismatch ? 'bold' : 'normal' }}>
-            {text}
-          </span>
+                    {text}
+                </span>
                 );
             }
         },
-        { title: 'Is Finish', dataIndex: 'isFinish', key: 'isFinish' },
-        { title: 'Insert Time', dataIndex: 'insert_time', key: 'insert_time' },
-        { title: 'Update Time', dataIndex: 'update_time', key: 'update_time' },
+        { title: 'Upload Time', dataIndex: 'insert_time', key: 'insert_time' },
+        { title: 'Check Time', dataIndex: 'update_time', key: 'update_time' },
         { title: 'User', dataIndex: 'user', key: 'user' },
-        { title: 'Remark', dataIndex: 'remark', key: 'remark' }
     ];
+
 
     const rowClassName = (record, index) => {
         let baseClass = index % 2 === 0 ? 'row-even' : 'row-odd';

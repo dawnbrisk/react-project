@@ -45,7 +45,7 @@ const PalletList = () => {
             </NavBar>
 
             <CapsuleTabs onChange={handleTabChange} defaultActiveKey="A&C">
-                {['A&C', 'Z', 'B'].map((key) => (
+                {['A&C', 'Z', 'History'].map((key) => (
                     <CapsuleTabs.Tab key={key} title={key} description="">
                         <List renderHeader={() => `${key} 列表`}>
                             {pagedList.map((sku) => (
@@ -67,17 +67,17 @@ const PalletList = () => {
                                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                                 disabled={currentPage === 1}
                             >
-                                上一页
+                                Last Page
                             </Button>
                             <span style={{ alignSelf: 'center' }}>
-                                第 {currentPage} / {totalPages} 页
+                                Page {currentPage} / {totalPages}
                             </span>
                             <Button
                                 size="small"
                                 onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                                 disabled={currentPage === totalPages}
                             >
-                                下一页
+                                Next Page
                             </Button>
                         </div>
                     </CapsuleTabs.Tab>

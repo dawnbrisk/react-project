@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Button, CapsuleTabs, List, NavBar, Selector, Toast} from 'antd-mobile';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Modal} from "antd";
@@ -15,6 +15,34 @@ const PalletPage = () => {
     const [selectedValues, setSelectedValues] = useState({});
 
     const [loading, setLoading] = useState(false);
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const fileInputRef = useRef(null);
+
+    const handleUploadClick = () => {
+        fileInputRef.current.click(); // 打开相机
+    };
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            Toast.show({content: `拍照完成，准备上传：${file.name}`, duration: 1500});
+
+            // 模拟上传，实际中请用 fetch 或 axios 上传到服务器
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // 示例上传接口，请替换为你的接口地址
+                // await fetch('/api/upload', { method: 'POST', body: formData });
+
+                console.log('照片已选择:', file);
+                Toast.show({content: '上传成功 ✅', duration: 2000});
+            } catch (err) {
+                Toast.show({content: '上传失败 ❌', duration: 2000});
+            }
+        }
+    }
 
 
     // 用户选择时更新状态
@@ -110,6 +138,7 @@ const PalletPage = () => {
 
 
 
+
     return (
         <div>
             <NavBar back="Back" onBack={() => navigate(`/WorkDetail_MergePallet_list`)}
@@ -184,7 +213,19 @@ const PalletPage = () => {
             {key !== 'done' && (
             <div style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
                 <Button color="success" onClick={() => window.history.back()}>  Last</Button>
-
+                <div>
+                    <Button color="primary" fill="outline" onClick={handleUploadClick}>
+                        take photos
+                    </Button>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        style={{ display: 'none' }}
+                    />
+                </div>
                 <Button color="success" onClick={handleNextClick}>Next  </Button>
             </div>
                 )}

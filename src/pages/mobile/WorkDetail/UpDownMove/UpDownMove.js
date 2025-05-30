@@ -81,7 +81,7 @@ const UpDownMove = () => {
 
                 >
                     <Input
-                        placeholder="please scan or input JSON with DESC"
+                        placeholder="please scan the location code"
                         value={form.getFieldValue('location')}
                         onChange={(val) => {
                             // 手动设置值（先显示用户输入）
