@@ -1,10 +1,10 @@
-import {Badge, Button, Footer, NavBar, NoticeBar, Space, TabBar, Toast} from 'antd-mobile';
+import {Badge, Button, WaterMark , NavBar, NoticeBar, Space, TabBar, Toast} from 'antd-mobile';
 import {useNavigate} from 'react-router-dom';
 import {
     AntOutline, AppOutline, CalculatorOutline,
     HistogramOutline, MessageFill, MessageOutline,
     TransportQRcodeOutline,  EyeOutline,
-    TruckOutline,
+    TruckOutline,LocationOutline ,
     UnorderedListOutline, UserOutline
 } from "antd-mobile-icons";
 import {useEffect, useState} from "react";
@@ -22,6 +22,22 @@ const JobSelection = () => {
         width: "33%",
         marginBottom: 20,
     };
+
+    const [username, setUsername] = useState('');
+    const [props, setProps] = useState({ content: 'Ant Design Mobile' });
+
+    useEffect(() => {
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+            const userObj = JSON.parse(userStr);
+            const username = userObj.username;
+            setUsername(username);
+            // 把 username 赋值给水印content
+            setProps({ content: `User: ${username}` });
+        }
+    }, []);
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -69,6 +85,7 @@ const JobSelection = () => {
 
     return (
         <div>
+            <WaterMark {...props} />
             <NavBar
                 back={null} right={<Button size="small" onClick={handleLogout}>Log out</Button>}
             >
@@ -134,6 +151,14 @@ const JobSelection = () => {
                             <EyeOutline fontSize={48} color='var(--adm-color-success)'/>
 
                             <span style={{fontSize: 12, marginTop: 4}}>Biweekly Check</span>
+                        </div>
+
+
+                        <div style={iconContainerStyle}
+                             onClick={() =>  navigate('/General_merge')}>
+
+                                <LocationOutline fontSize={48} color='var(--adm-color-danger)'/>
+                            <span style={{fontSize: 12, marginTop: 4}}>General Merge</span>
                         </div>
 
 
