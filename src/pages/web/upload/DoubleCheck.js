@@ -16,9 +16,30 @@ const doubleCheck = async (file) => {
 
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
         const skus = jsonData.map((row) => row[0]); // 获取第一列的所有SKU
+        function parseDateTime(dateTimeStr) {
+            // 将 "2025-05-30 09:20:55" 转成 "2025-05-30T09:20:55"
+            // 这样浏览器解析会更标准，默认当成本地时间
+            return new Date(dateTimeStr.replace(' ', 'T') );
+        }
 
         // 上传给后端
         try {
+
+            // 1. 先请求服务器时间
+            const serverTimeRes = await request('/getDate',{method:'GET'});
+            // 解析格式
+            debugger;
+            const serverTime = parseDateTime(serverTimeRes.date);
+            const now = new Date();
+
+            // 2. 计算时间差，单位小时
+            const diffHours = (now - serverTime) / (1000 * 60 * 60);
+
+            if (diffHours > 5) {
+                message.warning('库存数据时间较旧，请上传最新库存');
+                return;
+            }
+
             const response = await request('/doubleWeekCheck', {
                 body: JSON.stringify(skus)
             });
