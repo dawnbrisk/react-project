@@ -1,10 +1,10 @@
 // src/request.js
 import config from "./config";
-
+import { Dialog } from 'antd-mobile';
 export async function request(endpoint, options = {}) {
     const url = `${config.baseURL}${endpoint}`;
     const token = localStorage.getItem("token");
-
+    const isMobile = window.innerWidth <= 768;
     const headers = {
         "Content-Type": "application/json",
         ...(options.headers || {}),
@@ -29,8 +29,12 @@ export async function request(endpoint, options = {}) {
             // 先判断 HTTP 状态码
             if (res.status === 403) {
                 localStorage.removeItem("token");
-                alert("Login expired. Please sign in again.");
-                window.location.href = "/login";
+                Dialog.alert({
+                    content: 'Login expired. Please sign in again.',
+                });
+                if (!isMobile) {
+                    window.location.href = '/login';
+                }
                 throw new Error("403 Forbidden - 需要重新登录");
             }
             // 不管怎样，先返回 res.json() 解析成 JSON
@@ -40,7 +44,9 @@ export async function request(endpoint, options = {}) {
             // data 是后端返回的 JSON 对象
             if (response.code === 403) {
                 localStorage.removeItem("token");
-                alert("Login expired. Please sign in again.");
+                Dialog.alert({
+                    content: 'Login expired. Please sign in again.',
+                });
                 window.location.href = "/login";
                 throw new Error("403 Forbidden - 需要重新登录");
             }
