@@ -6,9 +6,14 @@ export async function request(endpoint, options = {}) {
     const token = localStorage.getItem("token");
     const isMobile = window.innerWidth <= 768;
     const headers = {
-        "Content-Type": "application/json",
         ...(options.headers || {}),
     };
+
+    // 如果不是 FormData，就默认用 application/json
+    const isFormData = options.body instanceof FormData;
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+    }
 
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
@@ -25,37 +30,36 @@ export async function request(endpoint, options = {}) {
 
     return fetch(url, newOptions)
         .then(res => {
-
             // 先判断 HTTP 状态码
             if (res.status === 403) {
                 localStorage.removeItem("token");
                 Dialog.alert({
                     content: 'Login expired. Please sign in again.',
+                    confirmText: 'Got it',
                 });
                 if (!isMobile) {
                     window.location.href = '/login';
                 }
-                throw new Error("403 Forbidden - 需要重新登录");
+
             }
+
             // 不管怎样，先返回 res.json() 解析成 JSON
             return res.json();
         })
         .then(response => {
-            // data 是后端返回的 JSON 对象
-            if (response.code === 403) {
+            if(response.code === 500){
                 localStorage.removeItem("token");
-                Dialog.alert({
-                    content: 'Login expired. Please sign in again.',
-                });
-                window.location.href = "/login";
-                throw new Error("403 Forbidden - 需要重新登录");
+
+                if (!isMobile) {
+                    window.location.href = '/login';
+                }
             }
-            // 这里返回 data.data，也就是你的 token 字符串，或者整个 data 对象都可以
+
             return response.data;
         })
         .catch(err => {
-            console.error("请求出错：", err);
-            throw err;
+            console.error("error：", err);
+
         });
 
 

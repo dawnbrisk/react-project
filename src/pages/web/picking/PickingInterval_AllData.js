@@ -38,7 +38,7 @@ const PickingIntervalLineChart = () => {
                 setSeriesList(series);
             })
             .catch(err => {
-                console.error("Failed to fetch averageInterval:", err);
+                console.error("Failed to fetch   :", err);
             });
     }, []);
 
@@ -50,7 +50,20 @@ const PickingIntervalLineChart = () => {
 
         const option = {
             title: { text: "Account Average Interval", left: "center" },
-            tooltip: { trigger: "axis" },
+            tooltip: {
+                trigger: "axis",
+                formatter: function (params) {
+                    const date = params[0].axisValue;
+                    let result = `${date}<br/>`;
+                    params.forEach(item => {
+                        if (item.data !== 0) {
+                            result += `${item.marker}${item.seriesName}: ${item.data}<br/>`;
+                        }
+                    });
+                    return result;
+                },
+            },
+
             legend: { top: "bottom" },
             xAxis: { type: "category", data: dateList },
             yAxis: { type: "value" },

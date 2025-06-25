@@ -10,7 +10,7 @@ export const getUsers = async () => {
         return await request(`/users`, {method: 'GET'});
     } catch (error) {
         console.error('获取用户列表失败:', error);
-        throw error;
+
     }
 };
 
@@ -23,7 +23,7 @@ export const addUser = async (userData) => {
         });
     } catch (error) {
         console.error('Failed to add the user:', error);
-        throw error;
+
     }
 };
 
@@ -37,7 +37,7 @@ export const editUser = async (userId, userData) => {
         return response.data;
     } catch (error) {
         console.error('编辑用户失败:', error);
-        throw error;
+
     }
 };
 
@@ -48,7 +48,7 @@ export const toggleUserStatus = async (userId) => {
         return response.data;
     } catch (error) {
         console.error('更新用户状态失败:', error);
-        throw error;
+
     }
 };
 
@@ -59,6 +59,6 @@ export const getUserById = async (userId) => {
         return response.data;
     } catch (error) {
         console.error('获取用户详情失败:', error);
-        throw error;
+
     }
 };

@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { List, Card, Skeleton, Toast, NavBar, Button } from 'antd-mobile';
 import { request } from "../../../../util/request";
+import  useAuthRedirect from "../../useAuthRedirect"
 
 const PAGE_SIZE = 10; // 每页数量
 
 const MixingLocation = () => {
+    const authenticated =useAuthRedirect();
+
     const [data, setData] = useState([]);
     const [pagedData, setPagedData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!authenticated) return;
         const fetchData = async () => {
             try {
                 const res = await request('/mixingLocation',{method:'GET'});

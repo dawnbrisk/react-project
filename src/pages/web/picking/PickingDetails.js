@@ -47,7 +47,7 @@ const StackedBarChart = () => {
         const hours = Array.from(hourSet).sort();
         const dates = Object.keys(groupedData).sort();
 
-        const series = hours.map(hour => ({
+        const series = hours.map((hour, index) => ({
             name: hour,
             type: "bar",
             stack: "total",
@@ -55,6 +55,7 @@ const StackedBarChart = () => {
             emphasis: {
                 focus: "series"
             },
+
             data: dates.map(date => groupedData[date][hour] || 0)
         }));
 

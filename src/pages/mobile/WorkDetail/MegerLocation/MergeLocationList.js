@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 
 import {Spin} from "antd";
 import {request} from "../../../../util/request";
+import  useAuthRedirect from "../../useAuthRedirect"
 
 const LocationList = () => {
-
+    const authenticated =useAuthRedirect();
     const navigate = useNavigate();  // Replace useHistory with useNavigate
     const [skuList, setSkuList] = useState([]);
     const [doneList, setDoneList] = useState([]);
@@ -21,6 +22,7 @@ const LocationList = () => {
 
 
     useEffect(() => {
+        if (!authenticated) return;
         // Fetch SKU data from the backend
         request('/locationList',{method:'GET'})
             .then(response => {
@@ -34,6 +36,7 @@ const LocationList = () => {
     }, []);
 
     useEffect(() => {
+        if (!authenticated) return;
         // Fetch SKU data from the backend
         const userStr = localStorage.getItem('user');
         const userInfo = JSON.parse(userStr);

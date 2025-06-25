@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { NavBar, List, CapsuleTabs, Button } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { request } from '../../../../util/request';
+import  useAuthRedirect from "../../useAuthRedirect"
 
 const PAGE_SIZE = 10;  // 每页显示数量
 
 const PalletList = () => {
+    const authenticated =useAuthRedirect();
+
     const navigate = useNavigate();
     const [skuList, setSkuList] = useState([]);
     const [currentTab, setCurrentTab] = useState('A&C');
@@ -27,6 +30,7 @@ const PalletList = () => {
     };
 
     useEffect(() => {
+        if (!authenticated) return;
         handleTabChange('A&C');
     }, []);
 

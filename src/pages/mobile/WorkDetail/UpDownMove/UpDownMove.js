@@ -9,17 +9,32 @@ import {
 } from 'antd-mobile'
 import { useNavigate } from 'react-router-dom'
 import { request } from '../../../../util/request'
+import  useAuthRedirect from "../../useAuthRedirect"
 
 const UpDownMove = () => {
+    const authenticated =useAuthRedirect();
     const navigate = useNavigate()
     const [form] = Form.useForm()
 
-    // 单独用于扫码 JSON 输入
-    const [scanBuffer, setScanBuffer] = useState('')
-
-
     const onFinish = async (values) => {
         try {
+            if (!authenticated) return;
+
+            const locationValue = values.location;
+
+            if (!locationValue || locationValue.trim() === '') {
+                Toast.show({ content: 'Location cannot be empty!', duration: 2000 });
+                return; // 阻止提交
+            }
+
+
+            const LOCATION_FORMAT_REGEX = /^B-\d{2}-\d{2}-./; // B-xx-xx-x 格式
+
+            if (!LOCATION_FORMAT_REGEX.test(locationValue)) {
+                Toast.show({ content: 'Invalid location format, expected B-xx-xx-x', duration: 2000 });
+                return; // 阻止提交
+            }
+
             const userAccount = localStorage.getItem('user')
             const parsedUser = JSON.parse(userAccount)
 
@@ -37,7 +52,7 @@ const UpDownMove = () => {
             form.resetFields(['fromLocation'])
             form.resetFields(['toLocation'])
             form.resetFields(['location'])
-            setScanBuffer('')
+
         } catch (error) {
             console.log(error)
             Toast.show({ content: 'Error!' + error, duration: 2000 })
@@ -104,7 +119,7 @@ const UpDownMove = () => {
                                 } catch (err) {
                                     // 无效 JSON，不处理
                                 }
-                            }, 100)
+                            }, 300)
                         }}
                     />
                 </Form.Item>
@@ -119,7 +134,7 @@ const UpDownMove = () => {
                             validator(_, value) {
                                 const toLocation = getFieldValue('toLocation')
                                 if (value === toLocation) {
-                                    return Promise.reject('From and To floors cannot be the same!')
+                                    return Promise.reject('the two floors cannot be the same!')
                                 }
                                 return Promise.resolve()
                             },

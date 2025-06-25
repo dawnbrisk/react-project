@@ -3,10 +3,11 @@ import { NavBar, List, CapsuleTabs, Button } from 'antd-mobile';
 import { useNavigate } from 'react-router-dom';
 import { Spin } from 'antd';
 import { request } from '../../../../util/request';
-
+import  useAuthRedirect from "../../useAuthRedirect"
 const PAGE_SIZE = 10;
 
 const OldestSkuList = () => {
+    const authenticated =useAuthRedirect();
     const navigate = useNavigate();
     const [skuList, setSkuList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -28,6 +29,7 @@ const OldestSkuList = () => {
     };
 
     useEffect(() => {
+        if (!authenticated) return;
         handleTabChange('P');
     }, []);
 
@@ -92,9 +94,9 @@ const OldestSkuList = () => {
                                         disabled={page === 1}
                                         onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                                     >
-                                        上一页
+                                        Last
                                     </Button>
-                                    <span>第 {page} / {totalPages} 页</span>
+                                    <span>Page {page} / {totalPages} </span>
                                     <Button
                                         size="small"
                                         disabled={page === totalPages}
@@ -104,7 +106,7 @@ const OldestSkuList = () => {
                                             )
                                         }
                                     >
-                                        下一页
+                                        Next
                                     </Button>
                                 </div>
                             </>

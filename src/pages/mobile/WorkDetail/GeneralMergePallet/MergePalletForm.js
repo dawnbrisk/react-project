@@ -9,16 +9,18 @@ import {
     NavBar,
 } from 'antd-mobile';
 import {request} from "../../../../util/request";
-
+import  useAuthRedirect from "../../useAuthRedirect"
 import {CameraOutline} from "antd-mobile-icons";
 
 export default function MergePalletPage() {
+    const authenticated =useAuthRedirect();
     const [form] = Form.useForm();
     const [skuA, setSkuA] = useState('');
     const [historyVisible, setHistoryVisible] = useState(false);
     const [historyList, setHistoryList] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const fileInputRef = useRef(null);
+    const [uploading, setUploading] = useState(false);
 
     const extractPalletInfo = (val: string) => {
         try {
@@ -45,14 +47,15 @@ export default function MergePalletPage() {
     };
 
     const handleSubmit = async () => {
-
+        if (!authenticated) return;
+        setUploading(true); // 开始上传（显示 loading）
         const values = form.getFieldsValue();
 
         const response = await request('/checkIfExist', {body: JSON.stringify({
                 fromPallet: values.palletA_code,
                 toPallet: values.palletB_code,
             })});
-        debugger;
+
         if(response >=1 ){
             Toast.show({icon: 'fail', content: 'Duplicate submission detected, Please check your submission history'});
             return;
@@ -72,6 +75,7 @@ export default function MergePalletPage() {
                 fileUrls = uploadRes || [];
             } catch (error) {
                 console.error('fail to upload:', error);
+                setUploading(false); // 上传失败也要恢复状态
                 return;
             }
         }
@@ -86,6 +90,7 @@ export default function MergePalletPage() {
             });
 
             if (res) {
+
                 Toast.show({icon: 'success', content: 'Merged successfully'});
 
             } else {
@@ -97,6 +102,8 @@ export default function MergePalletPage() {
             setSelectedFiles([]);
         } catch (err) {
             Toast.show({icon: 'fail', content: 'Network error'});
+        } finally {
+            setUploading(false); // 无论成功失败都恢复上传状态
         }
     };
 
@@ -106,6 +113,7 @@ export default function MergePalletPage() {
     };
 
     const fetchHistory = async () => {
+        if (!authenticated) return;
         try {
             const res = await request('/generalMergeHistory');
             setHistoryList(res);
@@ -182,7 +190,7 @@ export default function MergePalletPage() {
                         style={{marginBottom: 8}}
                     >
                         <Input
-                            placeholder="Scan Pallet A "
+                            placeholder="Move from which pallet?"
                             onBlur={(e) => handlePalletChange('palletA', e.target.value)}
                         />
                     </Form.Item>
@@ -203,7 +211,7 @@ export default function MergePalletPage() {
                         style={{marginBottom: 8}}
                     >
                         <Input
-                            placeholder="Scan Pallet B "
+                            placeholder="Move to which pallet?"
                             onBlur={(e) => handlePalletChange('palletB', e.target.value)}
                         />
                     </Form.Item>
@@ -263,7 +271,8 @@ export default function MergePalletPage() {
                         </div>
                     )}
                     <span/>
-                    <Button color="primary" size="large" onClick={handleSubmit} style={{ marginTop: '16px' }}>
+                    <Button loading={uploading}
+                            disabled={uploading} color="primary" size="large" onClick={handleSubmit} style={{ marginTop: '16px' }}>
                         Merge & Save
                     </Button>
 

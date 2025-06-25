@@ -54,7 +54,6 @@ const ExcelUpload = () => {
             }));
 
             request("/upload", {
-                method: "POST",
                 body: JSON.stringify(formattedData),
             }).then((response) => {
                 setUploading(false);
@@ -71,6 +70,11 @@ const ExcelUpload = () => {
         reader.readAsArrayBuffer(file);
         return false; // 阻止默认自动上传
     };
+
+
+    const spiderResult = ()=>{
+        request('/second_search',{method:'GET'})
+    }
 
     const commonDraggerProps = {
         multiple: true,
@@ -113,7 +117,7 @@ const ExcelUpload = () => {
 
             <Button
                 type="primary"
-                icon={<DownloadOutlined style={{ fontSize: 24 }} />}
+                icon={<InboxOutlined style={{ fontSize: 24 }} />}
                 onClick={handleExport}
                 style={{
                     width: 250,
@@ -128,6 +132,25 @@ const ExcelUpload = () => {
                 disabled={uploading} // 上传中禁用导出按钮，避免操作冲突
             >
                 Export Daily Data
+            </Button>
+
+            <Button
+                type="primary"
+                icon={<InboxOutlined style={{ fontSize: 24 }} />}
+                onClick={spiderResult}
+                style={{
+                    width: 250,
+                    height: 120,
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+                disabled={uploading}
+            >
+                Spider
             </Button>
 
         </Space>

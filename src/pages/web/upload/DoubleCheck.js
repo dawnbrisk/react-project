@@ -25,7 +25,7 @@ const doubleCheck = async (file) => {
         // 上传给后端
         try {
 
-            // 1. 先请求服务器时间
+            // 1. 先请求当前库存的时间
             const serverTimeRes = await request('/getDate',{method:'GET'});
             // 解析格式
             debugger;
@@ -36,7 +36,7 @@ const doubleCheck = async (file) => {
             const diffHours = (now - serverTime) / (1000 * 60 * 60);
 
             if (diffHours > 5) {
-                message.warning('库存数据时间较旧，请上传最新库存');
+                message.warning('The inventory data is outdated. Please upload the latest inventory.\n ');
                 return;
             }
 
@@ -46,8 +46,9 @@ const doubleCheck = async (file) => {
 
             // 假设后端返回的格式是类似于： [{"item_code":"WF318735AAB", ...}]
             exportToExcel(response);  // 导出返回的数据到Excel
+            message.success('Success!');
         } catch (error) {
-            message.error('上传失败');
+            message.error('Fail');
             console.log(error)
         }
     };

@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { List, Card, Toast, NavBar, Button, SpinLoading } from 'antd-mobile';
 import { request } from "../../../../util/request";
+import  useAuthRedirect from "../../useAuthRedirect"
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 8;
 
 const EmptyLocation = () => {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
+    const authenticated =useAuthRedirect();
 
     useEffect(() => {
+        if (!authenticated) return;
+
         const fetchData = async () => {
             try {
                 const response = await request('/emptyLocationList',{method:'GET'});

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {Button, DatePicker, Input, message, Radio, Space, Table} from 'antd';
-import {useNavigate} from "react-router-dom";
-import {request} from "../../util/request";
+import { Button, DatePicker, Input, message, Space, Table } from 'antd';
+import { useNavigate } from "react-router-dom";
+import { request } from "../../util/request";
 import dayjs from "dayjs";
+import config from "../../util/config";
+
+
 const PAGE_SIZE = 10;
 
 const MergePalletResult = () => {
@@ -13,56 +16,82 @@ const MergePalletResult = () => {
     const [name, setName] = useState("");
     const [dateRange, setDateRange] = useState([]);
     const navigate = useNavigate();
-    const {RangePicker} = DatePicker;
-    useEffect(() => {
-        fetchData( name, dateRange);
-    }, [ name, dateRange]);
+    const { RangePicker } = DatePicker;
+    const [pageSize, setPageSize] = useState(PAGE_SIZE);
 
-    const fetchData = async ( name, dateRange) => {
+
+    // 当 name, dateRange, currentPage 变化时自动请求数据
+    useEffect(() => {
+        fetchData(name, dateRange, currentPage, pageSize);
+    }, [name, dateRange, currentPage, pageSize]);
+
+
+    const fetchData = async (name, dateRange, page, size) => {
         setLoading(true);
         try {
-            const response = await request(`/getMergeSteps`,
-                {
-                    method: 'POST',
-                    body: JSON.stringify({name, dateRange})
-                }
-            );
+            const response = await request(`/getMergeSteps`, {
+                body: JSON.stringify({
+                    name,
+                    dateRange: dateRange.map(d => d.format()),
+                    page,
+                    pageSize: size,
+                }),
+            });
 
-            setData(response);
-            setTotal(response.total);
+            setData(response.data || []);
+            setTotal(response.total || 0);
         } catch (error) {
             message.error("Failed to fetch data");
         }
         setLoading(false);
     };
 
+
     const handleSearch = () => {
-        setCurrentPage(1);
-        fetchData(name, dateRange);
+        setCurrentPage(1); // 搜索时重置页码
     };
 
     const columns = [
-        {title: "User Name", dataIndex: "user", key: "username"},
-        {title: "SKU", dataIndex: "sku", key: "sku"},
-        {title: "Pieces", dataIndex: "pieces", key: "pieces"},
-        {title: "From Location", dataIndex: "from_location", key: "from_location"},
-        {title: "From Pallet", dataIndex: "from_pallet", key: "from_pallet"},
-        {title: "To Location", dataIndex: "to_location", key: "to_location"},
-        {title: "To Pallet", dataIndex: "to_pallet", key: "to_pallet"},
-        {title: "Finish?", dataIndex: "is_finish", key: "isFinish"},
-        {title: "Time", dataIndex: "update_time", key: "time"},
-        {title: "", dataIndex: "id", key: "id", hidden:true} // Hide the "ID" column
+        { title: "User Name", dataIndex: "user", key: "username" },
+        { title: "SKU", dataIndex: "sku", key: "sku" },
+        { title: "Pieces", dataIndex: "pieces", key: "pieces" },
+        { title: "From Location", dataIndex: "from_location", key: "from_location" },
+        { title: "From Pallet", dataIndex: "from_pallet", key: "from_pallet" },
+        { title: "To Location", dataIndex: "to_location", key: "to_location" },
+        { title: "To Pallet", dataIndex: "to_pallet", key: "to_pallet" },
+        {
+            title: "Type",
+            dataIndex: "type",
+            key: "type",
+            render: (value) => value === "1" ? "general" : <span style={{ color: 'green' }}>specific</span>,
+        },
+        { title: "Finish?", dataIndex: "is_finish", key: "isFinish" },
+        { title: "Time", dataIndex: "update_time", key: "time" },
+        {
+            title: "Photo",
+            dataIndex: "filePath",
+            key: "filePath",
+            render: (filePath) =>
+                filePath ? (
+                    <a
+                        href={`${config.baseURL}${filePath}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        photo
+                    </a>
+                ) : null,
+        }
     ];
 
     return (
         <div>
-            <Space style={{marginBottom: 16}}>
-
+            <Space style={{ marginBottom: 16 }}>
                 <Input
                     placeholder="Search Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    style={{width: 200}}
+                    style={{ width: 200 }}
                 />
 
                 <RangePicker
@@ -70,25 +99,30 @@ const MergePalletResult = () => {
                         hideDisabledOptions: true,
                         defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
                     }}
-                    onChange={(dates) => setDateRange(dates)}
+                    onChange={(dates) => setDateRange(dates || [])}
+                    allowClear
                 />
                 <Button type="primary" onClick={handleSearch}>Search</Button>
-                <Button type="primary" onClick={()=>{navigate('/mergePalletHistory')}}>History</Button>
+                <Button type="primary" onClick={() => { navigate('/mergePalletHistory') }}>History</Button>
             </Space>
-
 
             <Table
                 columns={columns}
                 dataSource={data}
                 loading={loading}
-                rowKey="id" // Use 'id' as rowKey
+                rowKey="id"
                 pagination={{
                     current: currentPage,
-                    pageSize: PAGE_SIZE,
+                    pageSize: pageSize,
                     total: total,
-                    showTotal: (total) => `Total: ${total}`, // 显示总数
-                    onChange: (page) => setCurrentPage(page),
+                    showSizeChanger: true,
+                    showTotal: (total) => `Total: ${total}`,
+                    onChange: (page, size) => {
+                        setCurrentPage(page);
+                        setPageSize(size);
+                    },
                 }}
+
             />
         </div>
     );

@@ -9,8 +9,12 @@ import {
 } from "antd-mobile-icons";
 import {useEffect, useState} from "react";
 import {request} from "../../util/request";
+import  useAuthRedirect from "./useAuthRedirect"
 
 const JobSelection = () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const authenticated =useAuthRedirect();
+
     const navigate = useNavigate();
     const [mixingLocationQty, setMixingLocationQty] = useState([]);
     const [date, setDate] = useState([]);
@@ -24,7 +28,7 @@ const JobSelection = () => {
     };
 
     const [username, setUsername] = useState('');
-    const [props, setProps] = useState({ content: 'Ant Design Mobile' });
+    const [props, setProps] = useState({ content: 'WareHouse NW' });
 
     useEffect(() => {
         const userStr = localStorage.getItem("user");
@@ -40,22 +44,20 @@ const JobSelection = () => {
 
 
     useEffect(() => {
+        if (!authenticated) return;
         const fetchData = async () => {
             try {
-                request('/mixingLocation',{method:'GET'}).then(response=>{
-                    setMixingLocationQty(response);
-                })
+                const mixingResponse = await request('/mixingLocation', { method: 'GET' });
+                setMixingLocationQty(mixingResponse);
 
-
-                request('/getDate',{method:'GET'}).then(response=>{
-                    setDate(response.date);
-                })
-
+                const dateResponse = await request('/getDate', { method: 'GET' });
+                setDate(dateResponse.date);
             } catch (error) {
                 Toast.show('Failed to fetch data');
                 console.error('Error fetching data:', error);
             }
         };
+
 
         fetchData();
     }, []);
@@ -92,7 +94,7 @@ const JobSelection = () => {
                 Work Type
             </NavBar>
             <div style={{padding: 20, textAlign: 'center'}}>
-                <NoticeBar content={`The result is based on the Excel data uploaded on ${date}`} color="alert" />
+                <NoticeBar content={`Excel data uploaded on ${date}`} color="alert" />
 
                 <Space direction="vertical" block>
 

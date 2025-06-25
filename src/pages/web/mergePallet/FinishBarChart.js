@@ -46,7 +46,7 @@ const FinishBarChart = ({ username, data }) => {
                     data: values,
                     barMaxWidth: 30,
                     itemStyle: {
-                        color: colorMap[username] || '#888'
+                        color: colorMap[username] || '#f4a261'
                     },
                     label: {
                         show: true,

@@ -3,9 +3,10 @@ import {Button, CapsuleTabs, List, NavBar, Selector, Toast} from 'antd-mobile';
 import { useNavigate, useParams} from 'react-router-dom';
 import {Modal, Radio, Space} from "antd";
 import {request} from "../../../../util/request";
-
+import  useAuthRedirect from "../../useAuthRedirect"
 
 const LocationPage = () => {
+    const authenticated =useAuthRedirect();
 
     const {sku,key} = useParams();  // 获取动态路由中的 sku 参数
     const navigate = useNavigate();  // Replace useHistory with useNavigate
@@ -37,6 +38,7 @@ const LocationPage = () => {
 
     // 提交数据到后端
     const handleSubmit = async () => {
+        if (!authenticated) return;
         try {
 
 
@@ -72,7 +74,7 @@ const LocationPage = () => {
 
     // 点击 Next 按钮时将数据传递给后端
     const handleNextClick = async () => {
-
+        if (!authenticated) return;
         // 发送请求到后端
         Modal.confirm({
             title: '',
@@ -88,6 +90,7 @@ const LocationPage = () => {
 
     // 使用 useEffect 在组件加载时请求数据
     useEffect(() => {
+        if (!authenticated) return;
         if (sku) {
             setLoading(true);
 

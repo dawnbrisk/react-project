@@ -1,6 +1,5 @@
 import './App.css';
 import { AuthProvider } from "./pages/web/login/AuthContext";
-import PrivateRoute from "./pages/web/login/PrivateRoute";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/mobile/LogIn";
 import Home from './pages/web/Home';
@@ -33,6 +32,7 @@ import MergeHistory from './pages/web/MergeLocation/MergeLocationHistory'
 import CheckedList from './pages/web/biweeklyCheck/CheckedList'
 import  MergePalletHistory from './pages/web/mergePallet/MergePalletHistory'
 import ToCheckDetail from './pages/mobile/WorkDetail/DoubleWeek/BiweeklyDetail.js'
+import General_merge from './pages/mobile/WorkDetail/GeneralMergePallet/MergePalletForm.js'
 function App() {
     const isMobile = window.innerWidth <= 768;
 
@@ -57,6 +57,7 @@ function App() {
                         <Route path='/Mixing_Location' element={<MixingLocation />} />
                         <Route path='/Empty_Location' element={<Empty_Location />} />
                         <Route path='/double_week_check' element={<DoubleWeekCheckList />} />
+                        <Route path='/general_merge' element={<General_merge />} />
                         <Route path='/ToCheckList/:item_code/:key' element={<ToCheckDetail />} />
 
                         <Route path='*' element={<Login />} />

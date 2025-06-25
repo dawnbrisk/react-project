@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import {useNavigate} from "react-router-dom";
 
 const { RangePicker } = DatePicker;
-const PAGE_SIZE = 10;
+
 
 const InventoryTable = () => {
     const [data, setData] = useState([]);
@@ -15,16 +15,18 @@ const InventoryTable = () => {
     const [name, setName] = useState("");
     const [dateRange, setDateRange] = useState([]);
     const navigate = useNavigate();
+    const [pageSize, setPageSize] = useState(10);
 
     useEffect(() => {
         fetchData(currentPage, name, dateRange);
-    }, [currentPage, name, dateRange]);
+    }, [currentPage, name, dateRange, pageSize]);
+
 
     const fetchData = async (page, name, dateRange) => {
         setLoading(true);
         try {
-            const response = await request(`/ActionList`,
-                {method:'POST',body: JSON.stringify({ page, pageSize: PAGE_SIZE, name, dateRange })}
+            const response = await request(`/actionList`,
+                {method:'POST',body: JSON.stringify({ page, pageSize: pageSize, name, dateRange })}
             );
 
             setData(response.result);
@@ -36,9 +38,9 @@ const InventoryTable = () => {
     };
 
     const handleSearch = () => {
-        setCurrentPage(1);
-        fetchData(1, name, dateRange);
+        setCurrentPage(1); // useEffect 会自动触发 fetchData
     };
+
 
     const columns = [
         { title: "User Name", dataIndex: "username", key: "username" },
@@ -77,10 +79,13 @@ const InventoryTable = () => {
                 rowKey="id" // Use 'id' as rowKey
                 pagination={{
                     current: currentPage,
-                    pageSize: PAGE_SIZE,
+                    pageSize: pageSize,
                     total: total,
-                    showTotal: (total) => `Total: ${total}`, // 显示总数
-                    onChange: (page) => setCurrentPage(page),
+                    showTotal: (total) => `Total: ${total}`,
+                    onChange: (page, pageSize) => {
+                        setCurrentPage(page);
+                        setPageSize(pageSize); // 可选：支持页面大小动态变化
+                    },
                 }}
             />
         </div>

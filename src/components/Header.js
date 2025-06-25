@@ -12,7 +12,12 @@ const Header = () => {
                 <Menu.Item key="download">
                     <Link to="/download">Download</Link>
                 </Menu.Item>
+                <Menu.Item key="logout" style={{ marginLeft: 'auto' }}>
+                    <Link to="/">Logout</Link>
+                </Menu.Item>
             </Menu>
+
+
         </header>
     );
 };
