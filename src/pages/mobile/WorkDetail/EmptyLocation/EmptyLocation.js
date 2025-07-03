@@ -12,7 +12,7 @@ const EmptyLocation = () => {
     const authenticated =useAuthRedirect();
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
 
         const fetchData = async () => {
             try {

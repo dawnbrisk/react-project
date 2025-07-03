@@ -71,9 +71,10 @@ const uploadPickingLists = (files: File[]) => {
                 body: JSON.stringify(allData)
             });
 
+
             message.success("All files uploaded successfully");
         } catch (error) {
-            message.error("Upload failed: " + error.message);
+            message.error("Upload failed");
             console.error("Error:", error);
         }
     };

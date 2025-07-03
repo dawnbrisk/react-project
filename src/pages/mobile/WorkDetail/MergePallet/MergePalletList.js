@@ -30,7 +30,7 @@ const PalletList = () => {
     };
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         handleTabChange('A&C');
     }, []);
 

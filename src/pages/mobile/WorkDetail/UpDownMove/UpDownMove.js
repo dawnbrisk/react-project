@@ -18,7 +18,7 @@ const UpDownMove = () => {
 
     const onFinish = async (values) => {
         try {
-            if (!authenticated) return;
+            //if (!authenticated) return;
 
             const locationValue = values.location;
 

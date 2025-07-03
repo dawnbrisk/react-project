@@ -11,6 +11,7 @@ import {
 import {request} from "../../../../util/request";
 import  useAuthRedirect from "../../useAuthRedirect"
 import {CameraOutline} from "antd-mobile-icons";
+import {message} from "antd";
 
 export default function MergePalletPage() {
     const authenticated =useAuthRedirect();
@@ -22,34 +23,38 @@ export default function MergePalletPage() {
     const fileInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
 
-    const extractPalletInfo = (val: string) => {
-        try {
-            const json = JSON.parse(val);
-            return {
-                code: json.DESC || '',
-                sku: json.R1_SKU || '',
-            };
-        } catch {
-            return {code: val, sku: ''};
-        }
-    };
-
-    const handlePalletChange = (prefix: 'palletA' | 'palletB', val: string) => {
-        const {code, sku} = extractPalletInfo(val);
-        const fieldUpdate: any = {
-            [`${prefix}_code`]: code,
-            [`${prefix}_raw`]: val,
-        };
-        if (prefix === 'palletA') {
-            setSkuA(sku);
-        }
-        form.setFieldsValue(fieldUpdate);
+    const isValidPalletCode = (code) => {
+        return /^\d{3}-\d{8}-\d{3}$/.test(code);
     };
 
     const handleSubmit = async () => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         setUploading(true); // 开始上传（显示 loading）
         const values = form.getFieldsValue();
+        let { palletA_code, palletB_code } = values;
+
+        palletA_code = palletA_code?.trim();
+        palletB_code = palletB_code?.trim();
+
+        // 先做非空校验
+        if (!palletA_code || !palletB_code) {
+            message.error("Both pallet codes are required.");
+            setUploading(false);
+            return;
+        }
+
+        // 再做格式校验
+        if (!isValidPalletCode(palletA_code) || !isValidPalletCode(palletB_code)) {
+            message.error("Please enter a correct pallet code (format: XXX-XXXXXXXX-XXX).");
+            setUploading(false);
+            return;
+        }
+
+        if (selectedFiles.length === 0) {
+            message.error('photo is required !')
+            setUploading(false);
+            return;
+        }
 
         const response = await request('/checkIfExist', {body: JSON.stringify({
                 fromPallet: values.palletA_code,
@@ -57,7 +62,8 @@ export default function MergePalletPage() {
             })});
 
         if(response >=1 ){
-            Toast.show({icon: 'fail', content: 'Duplicate submission detected, Please check your submission history'});
+            message.error({icon: 'fail', content: 'Duplicate submission detected, Please check your submission history'});
+            setUploading(false);
             return;
         }
 
@@ -113,7 +119,7 @@ export default function MergePalletPage() {
     };
 
     const fetchHistory = async () => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         try {
             const res = await request('/generalMergeHistory');
             setHistoryList(res);
@@ -130,6 +136,12 @@ export default function MergePalletPage() {
         const files = Array.from(event.target.files);
         if (!files.length) {
             Toast.show({content: 'No file selected'});
+
+            return;
+        }
+
+        if (files.length > 1) {
+            Toast.show({content: 'Only one photo can be uploaded'});
             return;
         }
 
@@ -188,10 +200,33 @@ export default function MergePalletPage() {
                         name="palletA_code"
                         label="Pallet A Code"
                         style={{marginBottom: 8}}
+
+                    
                     >
                         <Input
                             placeholder="Move from which pallet?"
-                            onBlur={(e) => handlePalletChange('palletA', e.target.value)}
+                            value={form.getFieldValue('palletA_code')}
+                            onChange={(val) => {
+                                // 手动设置值（先显示用户输入）
+                                //form.setFieldsValue({ palletA_code: val })
+
+                                // 100ms debounce 提取 DESC
+                                if (window.descDebounceTimer) clearTimeout(window.descDebounceTimer)
+                                window.descDebounceTimer = setTimeout(() => {
+                                    try {
+                                        const json = JSON.parse(val)
+                                        if (json.DESC) {
+                                            let desc = json.DESC
+
+
+
+                                            form.setFieldsValue({ palletA_code: desc })
+                                        }
+                                    } catch (err) {
+                                        // 无效 JSON，不处理
+                                    }
+                                }, 300)
+                            }}
                         />
                     </Form.Item>
                 </div>
@@ -208,12 +243,37 @@ export default function MergePalletPage() {
                     <Form.Item
                         name="palletB_code"
                         label="Pallet B Code"
+
+
                         style={{marginBottom: 8}}
                     >
                         <Input
                             placeholder="Move to which pallet?"
-                            onBlur={(e) => handlePalletChange('palletB', e.target.value)}
+                            value={form.getFieldValue("palletB_code")}
+                            onChange={(val) => {
+                                // 手动设置值（先显示用户输入）
+                                //form.setFieldsValue({ palletB_code: val })
+
+                                // 100ms debounce 提取 DESC
+                                if (window.descDebounceTimer) clearTimeout(window.descDebounceTimer)
+                                window.descDebounceTimer = setTimeout(() => {
+                                    try {
+                                        const json = JSON.parse(val)
+                                        if (json.DESC) {
+                                            let desc = json.DESC
+                                            // 无条件去掉前三个字符（不管是不是 101）
+
+
+                                            form.setFieldsValue({ palletB_code: desc })
+                                        }
+                                    } catch (err) {
+                                        // 无效 JSON，不处理
+                                    }
+                                }, 300)
+                            }}
                         />
+
+
                     </Form.Item>
                 </div>
 

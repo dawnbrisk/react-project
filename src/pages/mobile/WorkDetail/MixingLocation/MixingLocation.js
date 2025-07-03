@@ -14,7 +14,7 @@ const MixingLocation = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         const fetchData = async () => {
             try {
                 const res = await request('/mixingLocation',{method:'GET'});

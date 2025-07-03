@@ -29,7 +29,7 @@ const OldestSkuList = () => {
     };
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         handleTabChange('P');
     }, []);
 

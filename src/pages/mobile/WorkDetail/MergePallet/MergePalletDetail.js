@@ -39,7 +39,7 @@ const PalletPage = () => {
     // 提交数据到后端
     const handleSubmit = async () => {
         try {
-            if (!authenticated) return;
+            //if (!authenticated) return;
             request("/updatePalletFinish", {
                 method: "POST",
 
@@ -63,7 +63,7 @@ const PalletPage = () => {
 
     // 点击 Next 按钮时将数据传递给后端
     const handleNextClick = async () => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         // 发送请求到后端
         Modal.confirm({
             title: '',
@@ -79,7 +79,7 @@ const PalletPage = () => {
 
     // 使用 useEffect 在组件加载时请求数据
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         if (sku) {
             setLoading(true);
 

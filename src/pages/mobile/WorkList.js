@@ -44,7 +44,7 @@ const JobSelection = () => {
 
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         const fetchData = async () => {
             try {
                 const mixingResponse = await request('/mixingLocation', { method: 'GET' });
@@ -160,6 +160,15 @@ const JobSelection = () => {
                              onClick={() =>  navigate('/General_merge')}>
 
                                 <LocationOutline fontSize={48} color='var(--adm-color-danger)'/>
+                            <span style={{fontSize: 12, marginTop: 4}}>General Merge</span>
+                        </div>
+
+
+
+                        <div style={iconContainerStyle}
+                             onClick={() =>  navigate('/mobileStat')}>
+
+                            <HistogramOutline fontSize={48} color='var(--adm-color-danger)'/>
                             <span style={{fontSize: 12, marginTop: 4}}>General Merge</span>
                         </div>
 

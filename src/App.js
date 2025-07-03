@@ -33,6 +33,8 @@ import CheckedList from './pages/web/biweeklyCheck/CheckedList'
 import  MergePalletHistory from './pages/web/mergePallet/MergePalletHistory'
 import ToCheckDetail from './pages/mobile/WorkDetail/DoubleWeek/BiweeklyDetail.js'
 import General_merge from './pages/mobile/WorkDetail/GeneralMergePallet/MergePalletForm.js'
+import MobileStat from './pages/mobile/WorkDetail/statistics/MonthlyStatsCalendar';
+
 function App() {
     const isMobile = window.innerWidth <= 768;
 
@@ -59,7 +61,7 @@ function App() {
                         <Route path='/double_week_check' element={<DoubleWeekCheckList />} />
                         <Route path='/general_merge' element={<General_merge />} />
                         <Route path='/ToCheckList/:item_code/:key' element={<ToCheckDetail />} />
-
+                        <Route path='/mobileStat' element={<MobileStat />} />
                         <Route path='*' element={<Login />} />
                     </Routes>
                 ) : (

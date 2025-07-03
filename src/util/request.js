@@ -38,6 +38,7 @@ export async function request(endpoint, options = {}) {
                     confirmText: 'Got it',
                 });
                 if (!isMobile) {
+                    debugger
                     window.location.href = '/login';
                 }
 
@@ -47,6 +48,7 @@ export async function request(endpoint, options = {}) {
             return res.json();
         })
         .then(response => {
+            debugger
             if(response.code === 500){
                 localStorage.removeItem("token");
 

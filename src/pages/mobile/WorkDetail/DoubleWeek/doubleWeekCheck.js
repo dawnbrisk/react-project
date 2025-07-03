@@ -21,7 +21,7 @@ const DoubleWeekCheckList = () => {
     const paginatedDoneList = doneList.slice((donePage - 1) * pageSize, donePage * pageSize);
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
 
         // 获取待处理 SKU 列表
         request('/biweeklyList')
@@ -37,7 +37,7 @@ const DoubleWeekCheckList = () => {
     }, []);
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
 
         // 获取已完成 SKU 列表
         const userStr = localStorage.getItem('user');

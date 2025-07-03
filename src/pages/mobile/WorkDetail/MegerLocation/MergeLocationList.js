@@ -22,7 +22,7 @@ const LocationList = () => {
 
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         // Fetch SKU data from the backend
         request('/locationList',{method:'GET'})
             .then(response => {
@@ -36,7 +36,7 @@ const LocationList = () => {
     }, []);
 
     useEffect(() => {
-        if (!authenticated) return;
+        //if (!authenticated) return;
         // Fetch SKU data from the backend
         const userStr = localStorage.getItem('user');
         const userInfo = JSON.parse(userStr);
