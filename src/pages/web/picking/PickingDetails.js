@@ -6,8 +6,6 @@ import { request } from "../../../util/request"; // Your API request utility
 const StackedBarChart = () => {
     const chartRef = useRef(null);
     const { month, account } = useParams(); // 从路由获取参数
-
-
     const [rawData, setRawData] = useState([]);
 
     // ✅ 1️⃣ 获取后端数据
@@ -34,7 +32,7 @@ const StackedBarChart = () => {
 
         rawData.forEach(item => {
             const date = item.move_date;
-            const hour = item.hour_slot && item.hour_slot.substring(11, 13) + ":00"; // 检查 hour_slot 是否存在
+            const hour = item.hour_slot && item.hour_slot.substring(11, 13) + ":00";
             if (hour) {
                 hourSet.add(hour);
                 if (!groupedData[date]) {
@@ -47,7 +45,8 @@ const StackedBarChart = () => {
         const hours = Array.from(hourSet).sort();
         const dates = Object.keys(groupedData).sort();
 
-        const series = hours.map((hour, index) => ({
+        // 构造 series：每小时的数据
+        const series = hours.map(hour => ({
             name: hour,
             type: "bar",
             stack: "total",
@@ -55,9 +54,47 @@ const StackedBarChart = () => {
             emphasis: {
                 focus: "series"
             },
-
+            label: {
+                show: false // 不显示每一段的 label，只显示总和
+            },
             data: dates.map(date => groupedData[date][hour] || 0)
         }));
+
+        // 计算每天的总数
+        const totalData = dates.map(date =>
+            hours.reduce((sum, hour) => sum + (groupedData[date][hour] || 0), 0)
+        );
+
+        // 添加透明柱状图用于显示总和
+        // 添加自定义 label 显示总和（不参与堆叠）
+        series.push({
+            name: "总数标签",
+            type: "custom",
+            renderItem: function (params, api) {
+                const xValue = api.value(0); // 类别索引
+                const total = api.value(1); // 总和值
+
+                const point = api.coord([xValue, total]);
+                return {
+                    type: 'text',
+                    style: {
+                        text: total,
+                        x: point[0],
+                        y: point[1] - 10,
+                        textAlign: 'center',
+                        textVerticalAlign: 'bottom',
+                        fontSize: 14,
+                        fontWeight: 'bold'
+                    }
+                };
+            },
+            encode: {
+                x: 0,
+                y: 1
+            },
+            data: dates.map((date, index) => [date, totalData[index]])
+        });
+
 
         const option = {
             title: {
@@ -94,13 +131,8 @@ const StackedBarChart = () => {
         return () => chart.dispose(); // 清理
     }, [rawData, account]);
 
-
-
     return (
         <div style={{ position: "relative" }}>
-          
-
-            {/* 图表容器 */}
             <div ref={chartRef} style={{ width: "100%", height: "500px" }} />
         </div>
     );
