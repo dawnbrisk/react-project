@@ -14,7 +14,7 @@ const Login = () => {
                 body: JSON.stringify(values)
             })
                 .then(response => {
-                    debugger;
+
                     localStorage.setItem('token', response);
                     localStorage.setItem('user', JSON.stringify(values)); // 缓存账号密码
 

@@ -7,7 +7,7 @@ const DoubleWeeksCheckTable = () => {
     const [data, setData] = useState([]);
     const [pagination, setPagination] = useState({
         current: 1,
-        pageSize: 15,
+        pageSize: 1500,
         total: 0
     });
 

@@ -28,7 +28,7 @@ const doubleCheck = async (file) => {
             // 1. 先请求当前库存的时间
             const serverTimeRes = await request('/getDate',{method:'GET'});
             // 解析格式
-            debugger;
+
             const serverTime = parseDateTime(serverTimeRes.date);
             const now = new Date();
 

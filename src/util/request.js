@@ -30,6 +30,7 @@ export async function request(endpoint, options = {}) {
 
     return fetch(url, newOptions)
         .then(res => {
+            debugger
             // 先判断 HTTP 状态码
             if (res.status === 403) {
                 localStorage.removeItem("token");
@@ -39,6 +40,7 @@ export async function request(endpoint, options = {}) {
                 });
                 if (!isMobile) {
                     debugger
+                    console.log("status code :"+ res.status);
                     window.location.href = '/login';
                 }
 
@@ -53,6 +55,7 @@ export async function request(endpoint, options = {}) {
                 localStorage.removeItem("token");
 
                 if (!isMobile) {
+                    console.log("  A status code :"+ response.status);
                     window.location.href = '/login';
                 }
             }

@@ -88,7 +88,7 @@ const AccountTable: React.FC = () => {
     const exportToExcel = (month: string) => {
         const monthData = rawData.filter((item) => item.month === month);
 
-        debugger;
+
         if (monthData.length === 0) {
             message.warning("No data available for this month");
             return;

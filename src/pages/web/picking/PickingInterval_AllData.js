@@ -49,7 +49,7 @@ const PickingIntervalLineChart = () => {
         const chart = echarts.init(chartRef.current);
 
         const option = {
-            title: { text: "Account Average Interval", left: "center" },
+            title: { text: "Account Average Interval 平均拣货时间间隔（单位：秒)", left: "center" },
             tooltip: {
                 trigger: "axis",
                 formatter: function (params) {
